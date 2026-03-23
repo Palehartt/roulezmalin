@@ -1,0 +1,30 @@
+services:
+  # Le site web pour ton collègue
+  web:
+    build: ./frontend
+    ports:
+      - "5500:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html # Permet de voir les modifs HTML sans relancer Docker
+
+  # Ton futur serveur Java
+  api-writer:
+    build: ./api-writer
+    ports:
+      - "8081:8081"
+    container_name: api-writer-java
+    depends_on:
+      - database
+
+  api-reader:
+    build: ./api-reader
+    ports:
+      - "8080:8080"
+    container_name: api-reader-java
+    depends_on:
+      - database
+
+  # La base de données
+  database:
+    image: redis:alpine
+    container_name: redis-service

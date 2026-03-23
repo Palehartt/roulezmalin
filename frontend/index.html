@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Roulez Malin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"/>
+    <link rel="stylesheet" href="css/flatpickr-elegant-theme.css" />
+    <!-- <script src="https://cdn.jsdelivr.net/npm/flatpickr-elegant-theme/dist/flatpickr-sunday-highlight-plugin.umd.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script defer src="js/include.js"></script>
+    <script defer src="js/form.js"></script>
+    <script defer src="js/autocomplete.js"></script>
+</head>
+
+<body>
+
+    <!-- Header / Background -->
+    <header class="page-header"></header>
+
+    <!-- Menu -->
+    <div id="menu"></div>
+
+    <!-- Formulaire -->
+    <main class="search-wrapper">
+
+        <section class="search-box">
+
+            <form class="search-form" action="trajet" method="GET">
+
+                <!-- Type véhicule -->
+                <div class="vehicle-type">
+                    <span>Type de véhicule :</span>
+                    <button type="button" class="vehicle-btn active" data-value="tourisme">
+                        Tourisme
+                    </button>
+                    <button type="button" class="vehicle-btn" data-value="utilitaire">
+                        Utilitaire
+                    </button>
+                    <input type="hidden" name="vehicle" id="vehicle-type" value="tourisme">
+                    <label class="same-place">
+                        <input type="checkbox" id="same-location" checked>Même lieu de départ et d'arrivée
+                    </label>
+                </div>
+
+                <!-- Ligne principale -->
+                <div class="search-row">
+                    <div>
+                        <label>Départ</label>
+                        <input type="text" id="depart" name="departure" placeholder="Ville ou adresse">
+                    </div>
+
+                    <div>
+                        <label>Arrivée</label>
+                        <input type="text" id="arrive" name="arrival" placeholder="Ville ou adresse">
+                    </div>
+
+                    <div>
+                        <label>Départ</label>
+                        <input type="text" id="start-date" name="start" placeholder="Date et heure">
+                    </div>
+
+                    <div>
+                        <label>Retour</label>
+                        <input type="text" id="end-date" name="end" placeholder="Date et heure">
+                    </div>
+
+                    <div class="search-action">
+                        <button type="submit" id="search-btn" disabled>Rechercher</button>
+                    </div>
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+    <script>
+        const currentPage = "home";
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>RentViz – Offres</title>
+
+    <!-- Leaflet -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+    <link rel="stylesheet" href="css/test.css">
+</head>
+<body>
+
+<!-- MENU -->
+<div id="menu"></div>
+
+<!-- CARTE -->
+<section class="map-container" id="map-container">
+    <div id="map"></div>
+</section>
+
+<!-- OFFRES -->
+<main class="offers-container" id="offers">
+        <!-- <article class="offer-card recommended"> -->
+            <!-- Carte support dorée --> <!-- 
+            <div class="offer-highlight">
+                Offre la plus rapide
+            </div> -->
+
+            <!-- Carte principale (inchangée) 
+            <div class="offer-content">
+                <div class="offer-header">
+                    <h2>Peugeot 308</h2>
+                    <p>Manuelle · 5 places · Diesel</p>
+                </div>
+
+                <div class="vehicle-image">
+                    <img src="https://www.espagnauto.com/images/NEWW_208_GT.png" alt="Peugeot 308">
+                </div>
+
+                <div class="offer-footer">
+                    <span class="price">42€</span>
+                    <button class="btn-offer">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Logo_Europcar.svg">
+                        Voir l’offre
+                    </button>
+                </div>
+            </div>
+
+        </article> <-->
+        <article class="offer-card recommended" data-offer-id="1">
+
+            <div class="offer-extension">
+                Offre recommandée
+            </div>
+            
+            <div class="offer-header">
+                <h2>Peugeot 208</h2>
+                <p>Essence • Manuelle • 5 places</p>
+            </div>
+
+            <div class="vehicle-image">
+                <img src="https://www.espagnauto.com/images/NEWW_208_GT.png">
+            </div>
+
+            <div class="offer-footer">
+                <span class="price">42,90 €</span>
+                <button class="offer-btn">
+                    <img src="assets/logo-citiz.png">
+                    Voir l’offre
+                </button>
+            </div>
+
+        </article>
+        <article class="offer-card" data-offer-id="1">
+            <div class="offer-header">
+                <h2>Peugeot 208</h2>
+                <p>Essence • Manuelle • 5 places</p>
+            </div>
+
+            <div class="vehicle-image">
+                <img src="https://www.espagnauto.com/images/NEWW_208_GT.png">
+            </div>
+
+            <div class="offer-footer">
+                <span class="price">42,90 €</span>
+                <button class="offer-btn">
+                    <img src="assets/logo-citiz.png">
+                    Voir l’offre
+                </button>
+            </div>
+        </article>
+        <article class="offer-card">
+            <div class="offer-header">
+                <h2>Renault Clio</h2>
+                <p>Automatique · 5 places · Essence</p>
+            </div>
+
+            <div class="vehicle-image">
+                <img src="https://www.espagnauto.com/images/NEWW_208_GT.png">
+            </div>
+
+            <div class="offer-footer">
+                <span class="price">39€</span>
+                <button class="btn-offer">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/69/Avis_Logo.svg">
+                    Voir l’offre
+                </button>
+            </div>
+        </article>
+
+    <!-- autres offres -->
+</main>
+
+<!-- <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet.Motion JS -->
+<script src="https://cdn.jsdelivr.net/gh/Igor-Vladyka/leaflet.motion/dist/leaflet.motion.min.js"></script>
+
+<script src="https://unpkg.com/leaflet.motion/dist/leaflet.motion.min.js"></script>
+<!-- <script src="js/map.js"></script>
+<script src="js/offres.js"></script> -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

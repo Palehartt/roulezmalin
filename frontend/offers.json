@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "vehicle": "Peugeot 208",
+    "price": 42.90,
+    "departure": { "lat": 46.5197, "lng": 6.6323 },
+    "arrival": { "lat": 46.2044, "lng": 6.1432 }
+  },
+  {
+    "id": 2,
+    "vehicle": "Tesla Model 3",
+    "price": 89.90,
+    "departure": { "lat": 46.5197, "lng": 6.6323 },
+    "arrival": { "lat": 47.3769, "lng": 8.5417 }
+  }
+]
