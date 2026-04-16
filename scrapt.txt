@@ -1,0 +1,8 @@
+https://www.mingat.com/api/vehicle_category_price_lists?agency=/api/agencies/{agence}&vehicleType=/api/vehicle_types/{1ee8df18-7d95-6430-bd86-83a05e71a30f}&departure={2026-03-24T15:30:00.000Z}&return={2026-03-26T07:30:00.000Z}
+
+Liste des agences :
+- https://www.mingat.com/api/agencies
+
+
+
+

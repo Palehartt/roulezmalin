@@ -6,19 +6,21 @@ public class Trajet {
     private String dateDepart;
     private String dateArrivee;
     private String identifiant;
+    private String vehiculeType;
 
-    // Constructeur par défaut (Important pour la désérialisation Redis/JSON)
+    
     public Trajet() {}
 
-    public Trajet(String identifiant, String addresseDepart, String addresseArrivee, String dateDepart, String dateArrivee) {
+    public Trajet(String identifiant, String addresseDepart, String addresseArrivee, String dateDepart, String dateArrivee, String vehiculeType) {
         this.identifiant = identifiant;
         this.addresseDepart = addresseDepart;
         this.addresseArrivee = addresseArrivee;
         this.dateDepart = dateDepart;
         this.dateArrivee = dateArrivee;
+        this.vehiculeType = vehiculeType;
     }
 
-    // Garde tes getters existants et ajoute ceux-là pour la cohérence :
+    
     public String getDateArrivee() { return dateArrivee; }
     public void setDateArrivee(String dateArrivee) { this.dateArrivee = dateArrivee; }
     public void setAddresseDepart(String addresseDepart) { this.addresseDepart = addresseDepart; }
@@ -28,4 +30,5 @@ public class Trajet {
     public String getAddresseDepart() { return addresseDepart; }
     public String getAddresseArrivee() { return addresseArrivee; }
     public String getDateDepart() { return dateDepart; }
+    public String getTypeVehicule() { return vehiculeType; }
 }

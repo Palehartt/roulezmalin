@@ -1,0 +1,194 @@
+[
+  {
+    "nom": "Bourgoin",
+    "latitude": 45.585738017962,
+    "longitude": 5.256926997219,
+    "uuid": "1ee8e009-3eff-6602-89fe-1b95680138f8"
+  },
+  {
+    "nom": "Chambery",
+    "latitude": 45.55891601162,
+    "longitude": 5.973514004598,
+    "uuid": "1ee8e009-3f35-6bd0-9ca9-1b95680138f8"
+  },
+  {
+    "nom": "Chaponost - point relais",
+    "latitude": 45.7008893,
+    "longitude": 4.7670717,
+    "uuid": "1ee8e009-3f43-61c2-aa5e-1b95680138f8"
+  },
+  {
+    "nom": "Decines",
+    "latitude": 45.753818578019,
+    "longitude": 4.935145441097,
+    "uuid": "1ee8e009-3f51-6f10-a602-1b95680138f8"
+  },
+  {
+    "nom": "Genas - point relais",
+    "latitude": 45.73432,
+    "longitude": 4.98946,
+    "uuid": "1ee8e009-3f5d-6964-b8c1-1b95680138f8"
+  },
+  {
+    "nom": "Grenoble",
+    "latitude": 45.164043002373,
+    "longitude": 5.710488038934,
+    "uuid": "1ee8e009-3f6b-6bfe-b238-1b95680138f8"
+  },
+  {
+    "nom": "Saint Laurent De Mure - Point Relais",
+    "latitude": 45.690772,
+    "longitude": 5.0367047,
+    "uuid": "1ee8e009-3f94-6734-98d5-1b95680138f8"
+  },
+  {
+    "nom": "Meyzieu - point relais",
+    "latitude": 45.774518731167,
+    "longitude": 4.9866640865062,
+    "uuid": "1ee8e009-3fa2-6352-ae26-1b95680138f8"
+  },
+  {
+    "nom": "Pierre-Bénite",
+    "latitude": 45.698947019735,
+    "longitude": 4.82372702324,
+    "uuid": "1ee8e009-3fb0-6538-af07-1b95680138f8"
+  },
+  {
+    "nom": "Roanne",
+    "latitude": 46.050436010608,
+    "longitude": 4.066689034955,
+    "uuid": "1ee8e009-3fbf-6f24-9b98-1b95680138f8"
+  },
+  {
+    "nom": "Saint-Fons",
+    "latitude": 45.715161015147,
+    "longitude": 4.854742998655,
+    "uuid": "1ee8e009-3fcf-626c-8f7a-1b95680138f8"
+  },
+  {
+    "nom": "Tassin",
+    "latitude": 45.768287658691,
+    "longitude": 4.7864513397217,
+    "uuid": "1ee8e009-3ff0-6a0c-bd4b-1b95680138f8"
+  },
+  {
+    "nom": "Vienne",
+    "latitude": 45.525682,
+    "longitude": 4.892296,
+    "uuid": "1ee8e009-4001-65fa-9729-1b95680138f8"
+  },
+  {
+    "nom": "Vaulx-en-Velin",
+    "latitude": 45.788513183594,
+    "longitude": 4.9110999107361,
+    "uuid": "1ee8e009-4012-67d8-a02b-1b95680138f8"
+  },
+  {
+    "nom": "Bourg-en-Bresse",
+    "latitude": 46.217055002328,
+    "longitude": 5.213144964172,
+    "uuid": "1ee928ec-5e67-6a40-b24d-8b86f36fe485"
+  },
+  {
+    "nom": "Caluire",
+    "latitude": 45.781602014686,
+    "longitude": 4.842703987305,
+    "uuid": "1ee928ec-5ff7-64c8-a05d-8b86f36fe485"
+  },
+  {
+    "nom": "Cremieu - Point Relais",
+    "latitude": 45.74252940109,
+    "longitude": 5.2415791144478,
+    "uuid": "1ee928ec-6005-6cc6-8e02-8b86f36fe485"
+  },
+  {
+    "nom": "Craponne - Point Relais",
+    "latitude": 45.745406116147,
+    "longitude": 4.7007168351261,
+    "uuid": "1ee928ec-6013-62e0-b1fe-8b86f36fe485"
+  },
+  {
+    "nom": "Dardilly - Point Relais",
+    "latitude": 45.824627500546,
+    "longitude": 4.7610259974773,
+    "uuid": "1ee928ec-602c-69a2-b3f8-8b86f36fe485"
+  },
+  {
+    "nom": "Genay - point Relais",
+    "latitude": 45.889102935791,
+    "longitude": 4.8228797912598,
+    "uuid": "1ee928ec-6047-6fae-8155-8b86f36fe485"
+  },
+  {
+    "nom": "Chalon-sur-Saône",
+    "latitude": 46.754161993393,
+    "longitude": 4.846749009959,
+    "uuid": "1ee928ec-6063-6d26-b791-8b86f36fe485"
+  },
+  {
+    "nom": "Lyon 05 - Point Relais",
+    "latitude": 45.7533235,
+    "longitude": 4.7794571,
+    "uuid": "1ee928ec-6071-68ea-bc06-8b86f36fe485"
+  },
+  {
+    "nom": "Lyon 07 - Point Relais",
+    "latitude": 45.7462251,
+    "longitude": 4.8323565,
+    "uuid": "1ee928ec-607f-6e36-8fce-8b86f36fe485"
+  },
+  {
+    "nom": "Lyon - Vaise",
+    "latitude": 45.780191005105,
+    "longitude": 4.801178027317,
+    "uuid": "1ee928ec-608f-6340-a71a-8b86f36fe485"
+  },
+  {
+    "nom": "Mions",
+    "latitude": 45.681224994213,
+    "longitude": 4.957286028637,
+    "uuid": "1ee928ec-609d-626a-912a-8b86f36fe485"
+  },
+  {
+    "nom": "Rillieux la Pape - Point Relais",
+    "latitude": 45.827037811279,
+    "longitude": 4.9065356254578,
+    "uuid": "1ee928ec-60ab-6270-afcb-8b86f36fe485"
+  },
+  {
+    "nom": "Sathonay Camp - Point Relais",
+    "latitude": 45.823165893555,
+    "longitude": 4.8734364509583,
+    "uuid": "1ee928ec-60ba-6202-af85-8b86f36fe485"
+  },
+  {
+    "nom": "Saint Vulbas - Point Relais",
+    "latitude": 45.838779449463,
+    "longitude": 5.278048992157,
+    "uuid": "1ee928ec-60e7-6856-b83f-8b86f36fe485"
+  },
+  {
+    "nom": "Valence",
+    "latitude": 44.901203995059,
+    "longitude": 4.887181969773,
+    "uuid": "1ee928ec-6115-6f30-9157-8b86f36fe485"
+  },
+  {
+    "nom": "Villefranche-sur-Saône",
+    "latitude": 45.991081994023,
+    "longitude": 4.742620040077,
+    "uuid": "1ee928ec-6127-6596-be23-8b86f36fe485"
+  },
+  {
+    "nom": "Crolles",
+    "latitude": 45.270358265793,
+    "longitude": 5.8902888122911,
+    "uuid": "1eec98e0-2454-6742-9d71-a96169a1c8c3"
+  },
+  {
+    "nom": "Saint-Egrève",
+    "latitude": 45.241486913492,
+    "longitude": 5.6600134970829,
+    "uuid": "1eec98e5-288c-6f30-b9a1-57cad4718e88"
+  }
+]

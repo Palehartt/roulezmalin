@@ -19,7 +19,7 @@ public class RedisConfig {
 
     @Bean
     public MessageListenerAdapter listenerAdapter() {
-        // On crée l'adaptateur en lui donnant notre écouteur
+        
         return new MessageListenerAdapter(redisListener);
     }
 
@@ -30,7 +30,7 @@ public class RedisConfig {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         
-        // On branche l'écouteur sur le bon canal
+        
         container.addMessageListener(listenerAdapter, new PatternTopic(nomCanal));
         
         return container;

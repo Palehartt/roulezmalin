@@ -11,10 +11,10 @@ public class GeoService {
     private final List<Agence> agencesRentacar = new ArrayList<>();
 
     public GeoService() {
-        // On remplit la liste à l'initialisation du service
+        
         agencesRentacar.add(new Agence("Lyon Dardilly", 45.804335, 4.766333, "LYON - DARDILLY (TECHLID)"));
         agencesRentacar.add(new Agence("Lyon Part-Dieu", 45.7606, 4.8592, "LYON - GARE PART DIEU"));
-        // Ajoute d'autres agences ici si besoin
+        
     }
 
     public Agence trouverPlusProche(double userLat, double userLon) {
@@ -31,7 +31,7 @@ public class GeoService {
         return plusProche;
     }
 
-    // Formule simplifiée de distance (Pythagore suffit pour des petites distances)
+    
     private double calculerDistance(double lat1, double lon1, double lat2, double lon2) {
         double dLat = lat1 - lat2;
         double dLon = lon1 - lon2;

@@ -16,10 +16,10 @@ public class Agence {
     @JsonProperty("pickupDescription")
     private String pickupDescription;
 
-    // 1. Constructeur vide pour Jackson (Désérialisation)
+    
     public Agence() {}
 
-    // 2. Constructeur avec paramètres pour ton GeoService (Instanciation manuelle)
+    
     public Agence(String nom, double latitude, double longitude, String pickupDescription) {
         this.nom = nom;
         this.latitude = latitude;
@@ -27,7 +27,7 @@ public class Agence {
         this.pickupDescription = pickupDescription;
     }
 
-    // --- Getters et Setters ---
+    
     public String getNom() { return nom; }
     public void setNom(String nom) { this.nom = nom; }
 

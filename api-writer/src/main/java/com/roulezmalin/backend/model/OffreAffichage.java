@@ -7,7 +7,7 @@ public class OffreAffichage {
     public String boiteVitesse;
     public int nbPlaces;
     public String typeMoteur;
-    public String imageUrl; // <-- Nouveau champ
+    public String imageUrl; 
 
     public OffreAffichage(String nom, String exemple, double prix, String boite, int places, String moteur, String image) {
         this.nomVehicule = nom;

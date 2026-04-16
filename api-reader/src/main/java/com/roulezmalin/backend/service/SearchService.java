@@ -29,18 +29,18 @@ public class SearchService {
     public CompletableFuture<MessageReponse> initiateSearch(Trajet trajet) {
         String requestId = trajet.getIdentifiant();
         
-        // Nous créons une promesse qui n'a pas encore de résultat
+        
         CompletableFuture<MessageReponse> promise = new CompletableFuture<MessageReponse>()
             .orTimeout(10, TimeUnit.SECONDS)
             .exceptionally(ex -> {
-                // Si le timeout est atteint, on arrive ici
-                System.err.println("Le Writer n'a pas répondu à temps !");
+                casiers.remove(requestId);
+                System.err.println("Timeout pour " + requestId);
                 return new MessageReponse("Service temporairement indisponible", requestId, 504);
             });
         
         casiers.put(requestId, promise);
 
-        // Pour l'instant, affiche juste "Envoi de la requête " + requestId
+        
         System.out.println("Envoi de la requête " + requestId + " pour : " + trajet.getAddresseArrivee());
         
         executor.submit(() -> {

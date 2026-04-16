@@ -1,3 +1,5 @@
+const ip_serv = "localhost";
+
 //Retour sur le même lieu de départ
 document.addEventListener("DOMContentLoaded", () => {
     const checkbox = document.getElementById("same-location");
@@ -153,7 +155,7 @@ searchBtn.addEventListener("click", (event) => {
 
     // 1. Préparation des données
     const trajetData = {
-        adresseDepart: document.getElementById("depart").value,
+        addresseDepart: document.getElementById("depart").value,
         addresseArrivee: document.getElementById("arrive").value,
         dateDepart: document.getElementById("start-date").value,
         dateArrivee: document.getElementById("end-date").value,
@@ -165,7 +167,7 @@ searchBtn.addEventListener("click", (event) => {
 
     console.log("Envoi de la recherche :", payload);
 
-    fetch("http://localhost:8080/trajet", { // Remplace 8080 par ton port API
+    fetch("http://" + ip_serv + ":8080/trajet", { // Remplace 8080 par ton port API
         method: "POST",
         headers: {
             "Content-Type": "application/json" // On prévient qu'on envoie du JSON

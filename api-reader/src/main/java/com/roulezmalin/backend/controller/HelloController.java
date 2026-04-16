@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@CrossOrigin(origins = "http://localhost:5500")
+@CrossOrigin(origins = "*")
 
 @RestController
 public class HelloController {
@@ -23,11 +23,11 @@ public class HelloController {
     @Autowired
     private SearchService searchService;
 
-    @PostMapping("/trajet") // On passe en POST car on envoie des données
+    @PostMapping("/trajet") 
     public CompletableFuture<MessageReponse> nvTrajet(@RequestBody Trajet trajet) {
-        // Plus besoin de créer l'objet manuellement, Spring le fait pour toi !
+        System.out.println("[API-READER] Trajet reçu : " + trajet.getAddresseDepart() + " → " + trajet.getAddresseArrivee() + " | Date: " + trajet.getDateDepart());
         
-        // Si ton objet Trajet n'a pas encore d'ID à ce stade :
+        
         if (trajet.getIdentifiant() == null) {
             trajet.setIdentifiant(UUID.randomUUID().toString());
         }
