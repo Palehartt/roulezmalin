@@ -2,9 +2,13 @@
 FROM maven:3.9.6-eclipse-temurin-17-alpine AS build
 WORKDIR /app
 
-# On copie le fichier de configuration et le code source
+# 1. Copier SEULEMENT le pom.xml et télécharger les dépendances
 COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# 2. Copier le code source et compiler
 COPY src ./src
+RUN mvn clean package -DskipTests
 
 # On lance la compilation
 RUN mvn clean package -DskipTests

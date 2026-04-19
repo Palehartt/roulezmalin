@@ -15,6 +15,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import java.text.DecimalFormat;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -23,6 +24,9 @@ import java.util.*;
 
 @Service
 public class MingatClient {
+
+    // À ajouter en haut de la classe
+    private static final double MAX_DISTANCE_KM = 10.0;
 
     @Autowired
     private GeocodingService geocodingService;
@@ -48,6 +52,17 @@ public class MingatClient {
         }
     }
 
+    private double calculerDistanceKm(double lat1, double lon1, double lat2, double lon2) {
+        double earthRadius = 6371; // Rayon de la terre en km
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadius * c;
+    }
+
     private String formaterDate(String dateRecue) {
         DateTimeFormatter input = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         LocalDateTime dt = LocalDateTime.parse(dateRecue, input);
@@ -64,23 +79,46 @@ public class MingatClient {
             .orElseThrow(() -> new IllegalStateException("Aucune agence Mingat chargée"));
     }
 
+    private int parseIntSafe(String s) {
+        try {
+            String digits = s.replaceAll("[^0-9]", "");
+            return digits.isEmpty() ? 0 : Integer.parseInt(digits);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
     private Optional<MingatVehicleType> trouverTypeVehicule(String typeVehicule) {
         return vehicleTypes.stream()
             .filter(t -> t.title.equalsIgnoreCase(typeVehicule))
             .findFirst();
     }
 
-    public String fetchDisponibilites(Trajet trajet) {
+    public record MingatResult(String json, MingatAgence agence) {}
+
+    public MingatResult fetchDisponibilites(Trajet trajet) {
         if (agences.isEmpty() || vehicleTypes.isEmpty()) {
             System.err.println("[MINGAT] Données non chargées, skip.");
             return null;
         }
 
-        double[] coordsDep = geocodingService.getCoordinates(trajet.getAddresseDepart());
-        MingatAgence agence = trouverPlusProche(coordsDep[0], coordsDep[1]);
-        System.out.println("[MINGAT] Agence sélectionnée : " + agence.nom);
+        // double[] coordsDep = geocodingService.getCoordinates(trajet.getAddresseDepart());
+        String[] coordsDep = {trajet.getDepartLat(), trajet.getDepartLon()};
+        MingatAgence agence = trouverPlusProche(Double.parseDouble(coordsDep[0]), Double.parseDouble(coordsDep[1]));
 
-        String typeLabel = (trajet.getTypeVehicule() != null) ? trajet.getTypeVehicule() : "tourisme";
+        double distance = calculerDistanceKm(Double.parseDouble(coordsDep[0]), Double.parseDouble(coordsDep[1]), agence.latitude, agence.longitude);
+    
+        if (distance > MAX_DISTANCE_KM) {
+            System.out.println("[MINGAT] Trop loin de la zone Rhône-Alpes (" + String.format("%.2f", distance) + " km). Recherche annulée.");
+            return null;
+        } else if(!trajet.getAddresseDepart().equals(trajet.getAddresseArrivee())) {
+            System.out.println("[MINGAT] Pas de trajet local, skip de Mingat.");
+            return null;
+        }
+
+        System.out.println("[MINGAT] Agence sélectionnée : " + agence.nom + " pour les coordonnées " + String.valueOf(coordsDep[0]) + ", " + String.valueOf(coordsDep[1]));
+
+        String typeLabel = "tourisme";
         Optional<MingatVehicleType> typeOpt = trouverTypeVehicule(typeLabel);
         if (typeOpt.isEmpty()) {
             System.err.println("[MINGAT] Type véhicule inconnu : " + typeLabel);
@@ -92,7 +130,8 @@ public class MingatClient {
         String dateArrivee = formaterDate(trajet.getDateArrivee());
 
         // On tente l'appel, avec un retry si l'agence est fermée
-        return tenterAppel(agence, typeOpt.get(), dateDepart, dateArrivee, false);
+        String json = tenterAppel(agence, typeOpt.get(), dateDepart, dateArrivee, false);
+        return new MingatResult(json, agence);
     }
 
     private String tenterAppel(MingatAgence agence, MingatVehicleType type,
@@ -175,29 +214,91 @@ public class MingatClient {
         }
     }
 
-    public List<OffreAffichage> parserResultatsMingat(String json) {
+    /**
+     * Parse le JSON de Mingat pour créer des objets OffreAffichage
+     */
+    public List<OffreAffichage> parserResultatsMingat(String json, MingatAgence agence) {
         List<OffreAffichage> offres = new ArrayList<>();
-        try {
-            JsonNode root    = mapper.readTree(json);
-            JsonNode membres = root.path("hydra:member");
+        if (json == null || json.isEmpty()) return offres;
 
-            for (JsonNode item : membres) {
-                String nom   = item.path("vehicleCategory").path("title").asText("Véhicule");
-                double prix  = item.path("price").asDouble(0);
-                String image = item.path("vehicleCategory").path("image").path("relativePath").asText("");
-                if (!image.isEmpty()) image = "https://www.mingat.com" + image;
+        try {
+            JsonNode root = mapper.readTree(json);
+            // Le JSON est un tableau à la racine
+            if (!root.isArray()) {
+                System.err.println("[MINGAT] Format inattendu : pas un tableau");
+                return offres;
+            }
+
+            for (JsonNode item : root) {
+                JsonNode category = item.path("vehicleCategory");
+                JsonNode prices   = item.path("vehicleCategoryPrices");
+
+                // Pas de prix disponibles → on skip
+                if (!prices.isArray() || prices.isEmpty()) continue;
+
+                // On prend le premier prix disponible
+                JsonNode firstPrice = prices.get(0);
+                JsonNode priceNode  = firstPrice.path("price");
+
+                // Prix en centimes → conversion en euros
+                double prix = priceNode.path("priceWithVat").path("amount").asDouble(0) / 10000.0;
+
+                DecimalFormat f = new DecimalFormat();
+	            f.setMaximumFractionDigits(2);
+
+                String prixTTC = f.format(prix);
+
+                // Agence réelle (celle qui a le véhicule dispo)
+                String nomAgenceDispo = firstPrice.path("agency").path("title").asText(agence.nom);
+
+                // Infos catégorie
+                String nomCat   = category.path("title").asText("Véhicule").trim();
+                String description = category.path("description").asText("");
+                int nbPlaces    = category.path("seatsCount").asInt(5);
+                String driveType = category.path("driveType").asText("manual");
+                String boite    = driveType.equalsIgnoreCase("automatic") ? "Automatique" : "Manuelle";
+
+                // Carburants
+                JsonNode fuelTypes = category.path("fuelTypes");
+                String moteur = "Thermique";
+                if (fuelTypes.isArray()) {
+                    for (JsonNode fuel : fuelTypes) {
+                        if (fuel.asText().equalsIgnoreCase("electric")) {
+                            moteur = "Électrique";
+                            break;
+                        }
+                    }
+                }
+
+                // Image
+                String imagePath = category.path("image").path("relativePath").asText("");
+                String imageUrl  = imagePath.isEmpty() ? "" : "https://www.mingat.com" + imagePath;
+
+                // Kilométrage inclus
+                int kmInclus = priceNode.path("includedKilometers").asInt(0);
 
                 offres.add(new OffreAffichage(
-                    nom,
-                    "Mingat",
-                    prix,
-                    "", 0, "",
-                    image
+                    nomCat,
+                    description,
+                    prixTTC,
+                    boite,
+                    nbPlaces,
+                    moteur,
+                    imageUrl,
+                    true, // clim non fournie par l'API, valeur par défaut
+                    2,    // nbBagages non fourni, valeur par défaut
+                    String.valueOf(agence.latitude) + "," + String.valueOf(agence.longitude),
+                    String.valueOf(agence.latitude) + "," + String.valueOf(agence.longitude),
+                    nomAgenceDispo,
+                    "Mingat"
                 ));
             }
+
             System.out.println("[MINGAT] " + offres.size() + " offres parsées.");
+
         } catch (Exception e) {
             System.err.println("[MINGAT] Erreur parsing : " + e.getMessage());
+            e.printStackTrace();
         }
         return offres;
     }

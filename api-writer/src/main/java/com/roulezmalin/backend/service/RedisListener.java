@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roulezmalin.backend.model.MessageReponse;
+import com.roulezmalin.backend.model.MingatAgence;
 import com.roulezmalin.backend.model.OffreAffichage;
 import com.roulezmalin.backend.model.Trajet;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -29,6 +30,9 @@ public class RedisListener implements MessageListener {
 
     @Autowired
     private MingatClient mingatClient;
+
+    @Autowired
+    private EuropcarClient europcarClient;
 
     @Autowired
     private DriivemeClient driivemeClient;
@@ -56,12 +60,24 @@ public class RedisListener implements MessageListener {
 
             CompletableFuture<List<OffreAffichage>> futureMingat = CompletableFuture.supplyAsync(() -> {
                 try {
-                    String json = mingatClient.fetchDisponibilites(trajet);
-                    return mingatClient.parserResultatsMingat(json);
+                    if(trajet.getAddresseDepart() == trajet.getAddresseArrivee())
+                        return null;
+                    MingatClient.MingatResult result = mingatClient.fetchDisponibilites(trajet);
+                    if (result.agence() == null) System.out.println("[MINGAT] : Agence nulle");
+                    return mingatClient.parserResultatsMingat(result.json(), result.agence());
                 } catch (Exception e) {
                     System.err.println("[MINGAT] Erreur : " + e.getMessage());
                     return List.of();
-                }
+                } 
+            });
+
+            CompletableFuture<List<OffreAffichage>> futureEuropcar = CompletableFuture.supplyAsync(() -> {
+                try {
+                    return europcarClient.fetchOffres(trajet);
+                } catch (Exception e) {
+                    System.err.println("[EUROPCAR] Erreur : " + e.getMessage());
+                    return List.of();
+                } 
             });
 
             CompletableFuture<List<OffreAffichage>> futureDriiveme = CompletableFuture.supplyAsync(() -> {
@@ -70,21 +86,21 @@ public class RedisListener implements MessageListener {
                     String htmlDriiveme = driivemeClient.fetchResultsPage(trajet);
                     return driivemeClient.parserResultatsDriiveme(htmlDriiveme);
                 } catch (Exception e) {
-                    System.err.println("[DriiveMe] Echec : " + e.getMessage());
+                    System.err.println("[DriiveMe] Erreur : " + e.getMessage());
                     return List.of();
                 }
             });
 
-            CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureRentacar, futureMingat, futureDriiveme);
+            CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureRentacar, futureMingat, futureDriiveme, futureEuropcar);
 
             List<OffreAffichage> toutesLesOffres = allFutures.thenApply(v -> {
                 List<OffreAffichage> fusion = new ArrayList<>();
                 fusion.addAll(futureRentacar.join()); 
                 fusion.addAll(futureMingat.join());
                 fusion.addAll(futureDriiveme.join());
+                fusion.addAll(futureEuropcar.join());
                 return fusion;
             }).get(15, TimeUnit.SECONDS);
-                        
 
             String offresEnJson = objectMapper.writeValueAsString(toutesLesOffres);
             MessageReponse reponse = new MessageReponse(offresEnJson, trajet.getIdentifiant(), 200);

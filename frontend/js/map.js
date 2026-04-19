@@ -34,10 +34,14 @@ let routeLayer = null;
 
 export function initMap() {
     if (!map) {
-        map = L.map("map").setView([48.8566, 2.3522], 6);
+        map = L.map("map", { zoomControl: false }).setView([48.8566, 2.3522], 6);
 
         L.tileLayer("https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png", {
-            attribution: "© Stadia Maps"
+            attribution: "© RoulezMalin"
+        }).addTo(map);
+
+        L.control.zoom({
+            position: 'bottomleft'
         }).addTo(map);
     }
     return map;

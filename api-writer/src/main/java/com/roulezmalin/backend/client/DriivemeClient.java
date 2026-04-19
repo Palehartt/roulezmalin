@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roulezmalin.backend.model.OffreAffichage;
 import com.roulezmalin.backend.model.Trajet;
 import com.roulezmalin.backend.service.DriivemeGeoService;
+import com.roulezmalin.backend.service.GeocodingService;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,6 +32,9 @@ public class DriivemeClient {
     @Autowired
     private DriivemeGeoService driivemeGeoService;
 
+    @Autowired
+    private GeocodingService geocodingService;
+
     /**
      * Récupère la page HTML de résultats DriiveMe et retourne le HTML brut.
      */
@@ -44,8 +49,8 @@ public class DriivemeClient {
         // Extraire la ville du départ (ex: "Lyon, France" → "Lyon")
         System.out.println("[DriiveMe] Préparation requête pour trajet : " + trajet.getAddresseDepart() + " → " + trajet.getAddresseArrivee());
 
-        String villeDepart = extraireVille(trajet.getAddresseDepart());
-        String villeArrivee = extraireVille(trajet.getAddresseArrivee());
+        String villeDepart = extraireVille(Double.parseDouble(trajet.getDepartLat()), Double.parseDouble(trajet.getDepartLon()));
+        String villeArrivee = extraireVille(Double.parseDouble(trajet.getArriveLat()), Double.parseDouble(trajet.getArriveLon()));
         String dateDepart  = formaterDatePourDriiveme(trajet.getDateDepart());
         Integer departId = driivemeGeoService.getCityId(villeDepart);
         Integer arriveeId = driivemeGeoService.getCityId(villeArrivee);
@@ -109,11 +114,8 @@ public class DriivemeClient {
         if (htmlBrut == null || htmlBrut.isEmpty()) return offres;
 
         Document doc = Jsoup.parse(htmlBrut);
-
-        // 1. Extraire les URLs de détail depuis POIS_TRANSPORTS
         List<String> detailUrls = extraireDetailUrls(htmlBrut);
 
-        // 2. Parser chaque bloc trajet
         Elements blocks = doc.select("div.block-trajet");
         System.out.println("[DriiveMe] " + blocks.size() + " trajets trouvés");
 
@@ -121,94 +123,72 @@ public class DriivemeClient {
             Element block = blocks.get(i);
 
             try {
-                // Départ
+                // 1. Extraction des lieux pour le GPS/Modèle
                 Element depSpan = block.selectFirst("span.departure span.strong");
-                String depart    = depSpan != null ? depSpan.text() : "";
-                String departCp  = depSpan != null ? depSpan.attr("title") : "";
+                String departNom = depSpan != null ? depSpan.text() : "Inconnu";
+                
+                Element arrSpan = block.selectFirst("span.arrival span.strong");
+                String arriveeNom = arrSpan != null ? arrSpan.text() : "Inconnu";
 
-                // Arrivée
-                Element arrSpan  = block.selectFirst("span.arrival span.strong");
-                String arrivee   = arrSpan != null ? arrSpan.text() : "";
-
-                // Dates de disponibilité
-                String dateDebut = "", dateFin = "";
-                Element availSpan = block.selectFirst("span.availability");
-                if (availSpan != null) {
-                    String availText = availSpan.text();
-                    Matcher m = Pattern.compile("Départ du (.+?) au (.+?)(?:proposée|$)").matcher(availText);
-                    if (m.find()) {
-                        dateDebut = m.group(1).trim();
-                        dateFin   = m.group(2).trim();
-                    }
-                }
-
-                // Agence
-                String agence = "";
+                // 2. Agence
+                String agence = "DriiveMe";
                 Element agenceSpan = block.selectFirst("span.visible-xs");
                 if (agenceSpan != null) {
                     agence = agenceSpan.text().replace("proposée par ", "").trim();
                 }
 
-                // Logo agence
-                String agenceLogo = "";
-                Element cellRenter = block.selectFirst("div.cell-renter img");
-                if (cellRenter != null) agenceLogo = cellRenter.attr("src");
-
-                // Catégorie véhicule
+                // 3. Véhicule et Image
                 String categorieVehicule = "";
                 Element vehiculeInput = block.selectFirst("input[name=filterVehiculeValue]");
                 if (vehiculeInput != null) categorieVehicule = vehiculeInput.attr("value");
 
-                // Détail véhicule (depuis alt de l'image)
                 String vehiculeDetail = "";
+                String photoVehicule = "";
                 Element vehiculeImg = block.selectFirst("div.cell-vehicle img");
-                if (vehiculeImg != null) vehiculeDetail = vehiculeImg.attr("alt");
+                if (vehiculeImg != null) {
+                    vehiculeDetail = vehiculeImg.attr("alt");
+                    photoVehicule = vehiculeImg.attr("src");
+                }
 
-                // Options (places, durée, km)
-                String nbPlaces = "", dureeLocation = "", kmInclus = "";
+                // 4. Caractéristiques (Places, Boite, Clim)
+                String nbPlacesStr = "5";
+                String boite = "Manuelle"; // Par défaut sur DriiveMe sauf si précisé
+                boolean clim = true; // Généralement standard, mais non précisé dans le block
+                
                 Elements items = block.select("div.cell-option span.item");
                 for (Element item : items) {
                     String title = item.attr("title").toLowerCase();
-                    Element valEl = item.selectFirst("span.value");
-                    if (valEl == null) continue;
-                    String val = valEl.text().trim();
-                    if (title.contains("place"))  nbPlaces     = val;
-                    if (title.contains("heure"))  dureeLocation = val;
-                    if (title.contains("km"))     kmInclus     = val;
+                    String val = item.select("span.value").text().trim();
+                    if (title.contains("place")) nbPlacesStr = val;
+                    if (title.contains("automatique")) boite = "Automatique";
                 }
 
-                // Labels (ex: "+ de 24H")
-                List<String> labels = new ArrayList<>();
-                for (Element label : block.select("div.labels span.label")) {
-                    labels.add(label.text().trim());
-                }
+                nbPlacesStr = nbPlacesStr.split(" ")[0];
 
-                // URL de détail
-                String detailUrl = i < detailUrls.size() ? detailUrls.get(i) : "";
+                // 5. Coordonnées GPS (DriiveMe ne les donne pas en clair dans le HTML block)
+                // On met les noms des villes par défaut ou "0,0" si non trouvé
+                double[] coordsDep = geocodingService.getCoordinates(departNom);
+                double[] coordsArr = geocodingService.getCoordinates(arriveeNom);
 
-                // Construire le nom affiché
-                // Format: "Catégorie | Départ → Arrivée"
-                String nomVehicule = categorieVehicule.isEmpty() ? vehiculeDetail : categorieVehicule;
-                String exempleModele = depart + " → " + arrivee;
+                String gpsStart = String.valueOf(coordsDep[0])+","+String.valueOf(coordsDep[1]);
+                String gpsEnd = String.valueOf(coordsArr[0])+","+String.valueOf(coordsArr[1]);
 
-                // Prix : toujours 1€ chez DriiveMe
-                double prix = 1.0;
-
-                // Créer l'offre en utilisant la classe existante OffreAffichage
-                // On stocke les infos DriiveMe dans les champs disponibles
+                // 6. Création de l'offre avec le nouveau constructeur
                 OffreAffichage offre = new OffreAffichage(
-                    nomVehicule,      // nomVehicule  → catégorie (ex: "Berline")
-                    exempleModele,    // exempleModele → "Lyon → Paris"
-                    prix,             // prixTotal    → 1.0
-                    dureeLocation,    // boiteVitesse → durée (ex: "24H") — champ réutilisé
-                    parseIntSafe(nbPlaces),  // nbPlaces
-                    agence,           // typeMoteur   → agence (ex: "Avis") — champ réutilisé
-                    agenceLogo        // imageUrl     → logo agence
+                    categorieVehicule.isEmpty() ? "Véhicule" : categorieVehicule, // nomVehicule
+                    vehiculeDetail.isEmpty() ? departNom + " -> " + arriveeNom : vehiculeDetail, // exempleModele
+                    "1.0",                           // prixTotal (Toujours 1€)
+                    boite,                         // boiteVitesse
+                    Integer.parseInt(nbPlacesStr),      // nbPlaces
+                    "Essence/Gasoil",              // typeMoteur (Indéterminé sur la liste)
+                    photoVehicule,                 // imageUrl
+                    clim,                          // clim
+                    1,                             // nbBagages (Par défaut 1)
+                    gpsStart,                      // gpsDemarrage
+                    gpsEnd,                        // gpsArrivee
+                    agence,                         // nomAgence
+                    "DriiveMe"
                 );
-
-                // Afficher dans les logs pour debug
-                System.out.printf("[DriiveMe] %s → %s | %s | %s | %s | %s%n",
-                    depart, arrivee, dateDebut, agence, categorieVehicule, kmInclus);
 
                 offres.add(offre);
 
@@ -216,10 +196,9 @@ public class DriivemeClient {
                 System.err.println("[DriiveMe] Erreur parsing bloc " + i + " : " + e.getMessage());
             }
         }
-
         return offres;
     }
-
+    
     // ===== Méthodes utilitaires =====
 
     /**
@@ -255,10 +234,39 @@ public class DriivemeClient {
      * Extrait le nom de ville depuis une adresse complète.
      * Ex: "Lyon, Rhône-Alpes, France" → "Lyon"
      */
-    private String extraireVille(String adresse) {
-        if (adresse == null) return "";
-        // Prend le premier segment avant la virgule
-        return adresse.split(",")[0].trim();
+    private String extraireVille(double lat, double lon) {
+        try {
+            String url = "https://nominatim.openstreetmap.org/reverse?lat=" + lat 
+                    + "&lon=" + lon 
+                    + "&format=json&zoom=10";
+
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.set("User-Agent", "RoulezMalin/1.0 (projet-universitaire)");
+
+            var entity = new org.springframework.http.HttpEntity<>(headers);
+            var restTemplate = new org.springframework.web.client.RestTemplate();
+
+            var response = restTemplate.exchange(
+                url,
+                org.springframework.http.HttpMethod.GET,
+                entity,
+                String.class
+            );
+
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(response.getBody());
+
+            // Nominatim retourne address.city, address.town ou address.village selon la taille
+            com.fasterxml.jackson.databind.JsonNode address = root.path("address");
+            
+            if (!address.path("city").isMissingNode())   return address.path("city").asText();
+            if (!address.path("town").isMissingNode())   return address.path("town").asText();
+            if (!address.path("village").isMissingNode()) return address.path("village").asText();
+
+        } catch (Exception e) {
+            System.err.println("[DriiveMe] Erreur reverse geocoding : " + e.getMessage());
+        }
+        return "";
     }
 
     /**

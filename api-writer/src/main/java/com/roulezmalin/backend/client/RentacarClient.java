@@ -44,8 +44,11 @@ public class RentacarClient {
 
     public String fetchDisponibilites(Trajet trajet) {
         
-        double[] coordsDep = geocodingService.getCoordinates(trajet.getAddresseDepart());
-        double[] coordsArr = geocodingService.getCoordinates(trajet.getAddresseArrivee());
+        // double[] coordsDep = geocodingService.getCoordinates(trajet.getAddresseDepart());
+        // double[] coordsArr = geocodingService.getCoordinates(trajet.getAddresseArrivee());
+
+        String[] coordsDep = {trajet.getDepartLat(), trajet.getDepartLon()};
+        String[] coordsArr = {trajet.getArriveLat(), trajet.getArriveLon()};
 
         System.out.println("[RENTACAR] : Coordonnées de départ : " + coordsDep[0] + ", " + coordsDep[1]);
         System.out.println("[RENTACAR] : Coordonnées d'arrivée : " + coordsArr[0] + ", " + coordsArr[1]);
@@ -53,9 +56,14 @@ public class RentacarClient {
         String dateDepFormatee = formaterDatePourRentacar(trajet.getDateDepart());
         String dateArrFormatee = formaterDatePourRentacar(trajet.getDateArrivee());
 
-        
+        String rideType = "OneWay";
+
+        if(trajet.getAddresseDepart() == trajet.getAddresseArrivee()) {
+            rideType = "RoundTrip";
+        }
+
         String url = UriComponentsBuilder.fromHttpUrl("https://apiv2-www.rentacar.fr/api/agencies/v1/disponibilities")
-                .queryParam("RideType", "RoundTrip")
+                .queryParam("RideType", rideType)
                 .queryParam("Pickup.Latitude", coordsDep[0])
                 .queryParam("Pickup.Longitude", coordsDep[1])
                 .queryParam("Pickup.MaxNumberOfAgencies", 3)
@@ -102,32 +110,57 @@ public class RentacarClient {
             JsonNode root = mapper.readTree(jsonBrut);
             JsonNode disponibilities = root.path("disponibilities");
 
-            
             for (JsonNode dispo : disponibilities) {
+                // Extraction des infos de l'agence au niveau "disponibility"
+                String nomAgence = dispo.path("pickupAgency").path("name").asText();
+                String gpsStart = dispo.path("pickupAgency").path("latitude").asText() + "," + 
+                                dispo.path("pickupAgency").path("longitude").asText();
+                String gpsEnd = dispo.path("dropoffAgency").path("latitude").asText() + "," + 
+                                dispo.path("dropoffAgency").path("longitude").asText();
+
                 JsonNode categories = dispo.path("categories");
 
-                
                 for (JsonNode cat : categories) {
-                    
+                    // Traitement de l'image
                     String img = cat.path("vehicleImageUrl").asText();
-                    
                     if (img.startsWith("/")) {
                         img = "https://www.rentacar.fr" + img;
                     }
 
+                    // Détection de la clim dans la liste des équipements
+                    boolean aLaClim = false;
+                    for (JsonNode eq : cat.path("details").path("equipments")) {
+                        if (eq.asText().toLowerCase().contains("clim") || eq.asText().toLowerCase().contains("air conditionné")) {
+                            aLaClim = true;
+                            break;
+                        }
+                    }
+
+                    // Gestion du type de moteur (souvent null dans ce JSON)
+                    String moteur = cat.path("motorizationTypeLabel").isMissingNode() || cat.path("motorizationTypeLabel").isNull() 
+                                    ? "Non spécifié" 
+                                    : cat.path("motorizationTypeLabel").asText();
+
+                    // Ajout à la liste via le nouveau constructeur
                     offresTrouvees.add(new OffreAffichage(
-                        cat.path("vehicleLabel").asText(),
-                        cat.path("vehicleExample").asText(),
-                        cat.path("price").path("finalPrice").asDouble(),
-                        cat.path("gearboxTypeLabel").asText(),
-                        cat.path("seaterNumber").asInt(),
-                        cat.path("motorizationTypeLabel").asText(),
-                        img 
+                        cat.path("vehicleLabel").asText(),           // nomVehicule
+                        cat.path("vehicleExample").asText(),         // exempleModele
+                        String.valueOf(cat.path("price").path("finalPrice").asDouble()), // prixTotal
+                        cat.path("gearboxTypeLabel").asText(),       // boiteVitesse
+                        cat.path("seaterNumber").asInt(),            // nbPlaces
+                        moteur,                                      // typeMoteur
+                        img,                                         // imageUrl
+                        aLaClim,                                     // clim
+                        cat.path("largeLuggageNumber").asInt(),      // nbBagages
+                        gpsStart,                                    // gpsDemarrage
+                        gpsEnd,                                      // gpsArrivee
+                        nomAgence,                         // nomAgence
+                        "RentaCar"
                     ));
                 }
             }
         } catch (Exception e) {
-            System.err.println("[RENTACAR] : Erreur lors du parsing JSON : " + e.getMessage());
+            System.err.println("[RENTACAR] : Erreur lors du parsing : " + e.getMessage());
         }
         return offresTrouvees;
     }

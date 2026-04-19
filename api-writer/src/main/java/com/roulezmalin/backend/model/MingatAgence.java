@@ -9,4 +9,5 @@ public class MingatAgence {
     @JsonProperty("uuid")      public String uuid;
 
     public MingatAgence() {}
+
 }
