@@ -50,8 +50,9 @@ public class RedisListener implements MessageListener {
             
             CompletableFuture<List<OffreAffichage>> futureRentacar = CompletableFuture.supplyAsync(() -> {
                 try {
-                    String json = rentacarClient.fetchDisponibilites(trajet);
-                    return rentacarClient.parserResultatsRentacar(json);
+                    RentacarClient.RentacarResult result = rentacarClient.fetchDisponibilites(trajet);
+                    System.out.println("[RENTACAR] Json reçu : " + result.json());
+                    return rentacarClient.parserResultatsRentacar(result.json(), result.url());
                 } catch (Exception e) {
                     System.err.println("[RENTACAR] Erreur : " + e.getMessage());
                     return List.of(); 
@@ -64,7 +65,7 @@ public class RedisListener implements MessageListener {
                         return null;
                     MingatClient.MingatResult result = mingatClient.fetchDisponibilites(trajet);
                     if (result.agence() == null) System.out.println("[MINGAT] : Agence nulle");
-                    return mingatClient.parserResultatsMingat(result.json(), result.agence());
+                    return mingatClient.parserResultatsMingat(result.json(), result.agence(), result.url());
                 } catch (Exception e) {
                     System.err.println("[MINGAT] Erreur : " + e.getMessage());
                     return List.of();

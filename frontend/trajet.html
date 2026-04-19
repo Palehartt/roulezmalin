@@ -1,43 +1,117 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>RentViz – Offres</title>
+  <meta charset="UTF-8">
+  <title>Roulez Malin – Offres</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <!-- Leaflet -->
-    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"> -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script defer src="js/include.js"></script>
-    <link rel="stylesheet" href="css/test.css">
+  <!-- Leaflet CSS (une seule fois) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <!-- Styles locaux -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/test.css">
+
+  <!-- Scripts différés -->
+  <script defer src="js/include.js"></script>
 </head>
 <body>
 
-<!-- MENU -->
-<div id="menu"></div>
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════════ -->
+  <div id="menu"></div>
 
-<!-- CARTE -->
-<section class="map-container" id="map-container">
+  <!-- ═══════════════════════════════════════════
+       CARTE
+  ═══════════════════════════════════════════ -->
+  <section class="map-container" id="map-container">
     <div id="map"></div>
-</section>
+  </section>
 
-<!-- OFFRES -->
-<main class="offers-container" id="offers">
-    <!-- offres générées dynamiquement par offres.js -->
-</main>
+  <!-- ═══════════════════════════════════════════
+       CONTENU PRINCIPAL : filtres + offres
+  ═══════════════════════════════════════════ -->
+  <div class="page-layout">
 
-<!-- Leaflet -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/Igor-Vladyka/leaflet.motion/dist/leaflet.motion.min.js"></script>
-<script src="https://unpkg.com/leaflet.motion/dist/leaflet.motion.min.js"></script>
-<script type="module" src="js/main.js"></script>
+    <!-- ── Panneau de filtres ── -->
+    <aside class="filters-panel" id="filters-panel">
 
-<div id="negociations-reduites"></div>
-<script type="module" src="js/negociation.js"></script>
+      <div class="filters-header">
+        <span>Filtres</span>
+        <span class="offers-count" id="offers-count">-- offres</span>
+      </div>
 
-<script>
-        const currentPage = "compare";
-</script>
+      <!-- Tri par prix -->
+      <div class="filter-group">
+        <label class="filter-label">Trier par prix</label>
+        <div class="filter-row">
+          <button class="filter-sort active" data-sort="asc">↑ Moins cher</button>
+          <button class="filter-sort"        data-sort="desc">↓ Plus cher</button>
+        </div>
+      </div>
+
+      <!-- Proximité agence de départ -->
+      <div class="filter-group">
+        <label class="filter-label">Proximité agence de départ</label>
+        <input type="range" id="dist-range" min="1" max="100" value="100" step="1">
+        <div class="filter-range-val">
+          Rayon max : <strong id="dist-label">100 km</strong>
+        </div>
+      </div>
+
+      <!-- Loueur -->
+      <div class="filter-group">
+        <label class="filter-label">Loueur</label>
+        <div class="filter-chips" id="company-chips">
+          <button class="filter-chip active" data-value="Tous">Tous</button>
+          <button class="filter-chip" data-value="RentaCar">RentaCar</button>
+          <button class="filter-chip" data-value="Mingat">Mingat</button>
+          <button class="filter-chip" data-value="Europcar">Europcar</button>
+          <button class="filter-chip" data-value="DriiveMe">DriiveMe</button>
+        </div>
+      </div>
+
+      <!-- Boîte de vitesses -->
+      <div class="filter-group">
+        <label class="filter-label">Boîte de vitesses</label>
+        <div class="filter-chips" id="gearbox-chips">
+          <button class="filter-chip active" data-value="Toutes">Toutes</button>
+          <button class="filter-chip" data-value="Manuelle">Manuelle</button>
+          <button class="filter-chip" data-value="Automatique">Automatique</button>
+        </div>
+      </div>
+
+      <button id="reset-filters">Réinitialiser</button>
+    </aside>
+
+    <!-- ── Liste des offres ── -->
+    <main class="offers-container" id="offers"></main>
+
+  </div><!-- /.page-layout -->
+
+  <!-- ═══════════════════════════════════════════
+       FENÊTRES DE NÉGOCIATION (fixées en bas)
+  ═══════════════════════════════════════════ -->
+  <div id="negociations-reduites"></div>
+
+  <!-- ═══════════════════════════════════════════
+       SCRIPTS
+  ═══════════════════════════════════════════ -->
+  <!-- Leaflet JS (une seule fois) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Plugins Leaflet -->
+  <script src="https://cdn.jsdelivr.net/gh/Igor-Vladyka/leaflet.motion/dist/leaflet.motion.min.js"></script>
+
+  <!-- Modules applicatifs -->
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/negociation.js"></script>
+
+  <!-- Variable de page -->
+  <script>
+    const currentPage = "compare";
+    const tooltip = document.getElementById("tooltip");
+  </script>
+
 </body>
 </html>

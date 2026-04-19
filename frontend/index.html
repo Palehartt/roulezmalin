@@ -23,171 +23,156 @@
 
     <!-- Hero -->
     <section class="hero">
-        <h1>Trouvez la meilleure location au meilleur prix</h1>
+        <h1>Trouvez la meilleure location au <span class="accent">meilleur prix</span></h1>
         <p>
             Comparez des centaines d’offres et découvrez des trajets à partir de 1€
         </p>
     </section>
 
+    <div class="hero-tag">Nouveau · 300+ offres à prix réduit disponibles</div>
+
     <!-- Formulaire -->
     <main class="search-wrapper">
-
-        <section class="search-box">
-
+        <div class="search-box">
             <form class="search-form" action="trajet" method="GET">
-
-                <!-- Type véhicule -->
-                <div class="vehicle-type">
-                    <span>Type de véhicule :</span>
-                    <button type="button" class="vehicle-btn active" data-value="tourisme">
-                        Tourisme
-                    </button>
-                    <button type="button" class="vehicle-btn" data-value="utilitaire">
-                        Utilitaire
-                    </button>
-                    <input type="hidden" name="vehicle" id="vehicle-type" value="tourisme">
-                    <label class="same-place">
-                        <input type="checkbox" id="same-location" checked>Même lieu de départ et d'arrivée
-                    </label>
-                </div>
-
-                <!-- Ligne principale -->
-                <div class="search-row">
-                    <div>
-                        <label>Départ</label>
-                        <input type="text" id="depart" name="departure" placeholder="Ville ou adresse">
-                    </div>
-
-                    <div>
-                        <label>Arrivée</label>
-                        <input type="text" id="arrive" name="arrival" placeholder="Ville ou adresse">
-                    </div>
-
-                    <div>
-                        <label>Départ</label>
-                        <input type="text" id="start-date" name="start" placeholder="Date et heure">
-                    </div>
-
-                    <div>
-                        <label>Retour</label>
-                        <input type="text" id="end-date" name="end" placeholder="Date et heure">
-                    </div>
-
-                    <div>
-                        <label>Budget (€)</label>
-                        <input type="number" id="budget" name="budget" placeholder="Budget max" min="0">
-                    </div>
-
-                    <div class="search-action">
-                        <button type="submit" id="search-btn" disabled>Rechercher</button>
-                    </div>
-                </div>
-
+             <div class="vehicle-type">
+               <span class="vehicle-label">Véhicule :</span>
+               <button type="button" class="vehicle-btn active" data-value="tourisme"
+                   onclick="setVehicle(this)">Tourisme</button>
+               <button type="button" class="vehicle-btn" data-value="utilitaire"
+                   onclick="setVehicle(this)">Utilitaire</button>
+               <input type="hidden" name="vehicle" id="vehicle-type" value="tourisme">
+               <label class="same-place-label">
+                 <input type="checkbox" id="same-location" checked> Même lieu de départ et d'arrivée
+               </label>
+             </div>
+             <div class="search-row">
+               <div class="field-group">
+                 <label class="field-label">Départ</label>
+                 <input class="field-input" id="depart" name="departure" type="text" placeholder="Ville ou adresse">
+               </div>
+               <div class="field-group">
+                 <label class="field-label">Arrivée</label>
+                 <input class="field-input" id="arrive" name="arrival" type="text" placeholder="Ville ou adresse">
+               </div>
+               <div class="field-group">
+                 <label class="field-label">Date départ</label>
+                 <input class="field-input" id="start-date" name="start" type="text" placeholder="Date et heure">
+               </div>
+               <div class="field-group">
+                 <label class="field-label">Date retour</label>
+                 <input class="field-input" id="end-date" name="end" type="text" placeholder="Date et heure">
+               </div>
+               <div class="field-group">
+                 <label class="field-label">Budget (€)</label>
+                 <input class="field-input" id="budget" name="budget" type="number" placeholder="Max">
+               </div>
+               <button class="search-btn" type="submit" id="search-btn" disabled>Rechercher</button>
+             </div>
             </form>
-
-        </section>
+        </div>
 
     </main>
 
     <!-- feature -->
     <section class="features">
-        <div class="feature">
-            <h3>🔎 Comparaison rapide</h3>
-            <p>Toutes les offres en quelques secondes</p>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🔎</div>
+            <h3>Comparez instantanément</h3>
+            <p>Toutes les offres des meilleurs loueurs réunies au même endroit, en temps réel.</p>
+          </div>
+          <div class="feature-card featured">
+            <div class="feature-icon">🤝</div>
+            <h3>Négociez vos prix</h3>
+            <p>Proposez votre tarif directement aux loueurs et obtenez des offres personnalisées.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🚗</div>
+            <h3>Trajets à 1€</h3>
+            <p>Convoyez un véhicule et ne payez presque rien. Des centaines d'offres disponibles.</p>
+          </div>
         </div>
+    </section>
 
-        <div class="feature">
-            <h3>💸 Négociez vos prix</h3>
-            <p>Proposez votre tarif aux loueurs</p>
-        </div>
-
-        <div class="feature">
-            <h3>🚗 Offres à 1€</h3>
-            <p>Profitez des trajets de convoyage</p>
+    <!-- Negoci -->
+    <section class="negociation">
+        <div class="negociation-content">
+            <h2>Une révolution dans la location</h2>
+            <h3>🤝 Négociez vos prix</h3>
+    
+            <p>
+                Envoyez votre prix aux loueurs et laissez-les vous répondre.
+                Obtenez des offres personnalisées en quelques minutes.
+            </p>
+    
+            <a href="#" class="btn-primary">Tester la négociation</a>
         </div>
     </section>
 
     <!-- stats -->
     <section class="stats">
         <div class="stat">
-            <h3 class="counter" data-target="5000">0</h3>
-            <p>Offres comparées</p>
+            <div class="stat-num" id="c1">0</div>
+            <div class="stat-label">Offres comparées</div>
         </div>
-
         <div class="stat">
-            <h3 class="counter" data-target="120">0</h3>
-            <p>Partenaires</p>
+            <div class="stat-num" id="c2">0</div>
+            <div class="stat-label">Partenaires actifs</div>
         </div>
-
         <div class="stat">
-            <h3 class="counter" data-target="300">0</h3>
-            <p>Offres à prix réduit</p>
+            <div class="stat-num" id="c3">0</div>
+            <div class="stat-label">Négociation réussi</div>
         </div>
     </section>
 
-    <!-- Un Euro -->
-    <section class="one-euro">
-        <h2>🚀 Trajets disponibles à 1€</h2>
-        <p>Déplacez un véhicule et payez seulement 1€</p>
-
-        <div class="deal-cards">
-            <div class="deal-card">
-                <span class="badge">1€</span>
-                <h3>Paris → Lyon</h3>
-                <p>Convoyage véhicule</p>
-            </div>
-
-            <div class="deal-card">
-                <span class="badge">-40%</span>
-                <h3>Marseille → Nice</h3>
-                <p>Offre limitée</p>
-            </div>
-
-            <div class="deal-card">
-                <span class="badge">Top</span>
-                <h3>Lille → Bruxelles</h3>
-                <p>Très demandé</p>
-            </div>
+    <section class="deals">
+        <h2 class="section-title">🔥 Meilleures opportunités du moment</h2>
+        <div class="deal-grid">
+          <div class="deal-card">
+            <div class="badge">1€</div>
+            <h3>Lyon → Paris</h3>
+            <p>Convoyage véhicule</p>
+          </div>
+          <div class="deal-card">
+            <div class="badge">-35%</div>
+            <h3>Bordeaux → Toulouse</h3>
+            <p>Promo week-end</p>
+          </div>
+          <div class="deal-card">
+            <div class="badge">Top</div>
+            <h3>Lyon → Marseille</h3>
+            <p>Très demandé</p>
+          </div>
         </div>
     </section>
 
-    <!-- Comment -->
-    <section class="how-it-works">
-        <h2>Comment ça marche ?</h2>
-
-        <div class="steps">
-            <div>1️⃣ Recherchez votre trajet</div>
-            <div>2️⃣ Comparez les offres</div>
-            <div>3️⃣ Réservez au meilleur prix</div>
-        </div>
-    </section>
-
-    <!-- Review -->
+    <!-- review -->
     <section class="reviews">
-        <h2>Ils utilisent RentViz</h2>
-
-        <div class="review-cards">
-            <div class="review">
-                <p>"J’ai trouvé une voiture 30% moins chère en 2 minutes."</p>
-                <span>— Julien</span>
-            </div>
-
-            <div class="review">
-                <p>"Le système de négociation est génial."</p>
-                <span>— Sarah</span>
-            </div>
-
-            <div class="review">
-                <p>"J’ai payé 1€ pour un trajet Paris-Lyon, incroyable."</p>
-                <span>— Thomas</span>
-            </div>
+        <h2 class="section-title">Ce qu'ils en pensent</h2>
+        <div class="review-grid">
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <p>"J'ai trouvé une voiture 30% moins chère en 2 minutes. Interface super intuitive."</p>
+            <div class="review-author">— Julien M.</div>
+          </div>
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <p>"Le système de négociation est génial. J'ai obtenu une réduction de 40% !"</p>
+            <div class="review-author">— Sarah L.</div>
+          </div>
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <p>"J'ai payé 1€ pour un trajet Paris-Lyon. Incroyable. Je recommande à 100%."</p>
+            <div class="review-author">— Thomas K.</div>
+          </div>
         </div>
     </section>
 
     <!-- Back to Search -->
-    <section class="cta">
+    <section class="ready">
         <h2>Prêt à trouver votre voiture ?</h2>
-        <a href="#search" class="btn-primary">Rechercher maintenant</a>
+        <a href="#" class="btn-primary">Rechercher maintenant</a>
     </section>
 
     <!-- Footer -->
@@ -195,6 +180,67 @@
 
     <script>
         const currentPage = "home";
+
+        function animateCounter(el, target, suffix) {
+            let start = 0;
+            const duration = 1800;
+            const step = timestamp => {
+                if (!start) start = timestamp;
+                const progress = Math.min((timestamp - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.round(eased * target).toLocaleString('fr-FR') + (suffix || '');
+                if (progress < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                observer.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll('.stat, .section-title, .feature-card, .deal-card, .review').forEach(el => observer.observe(el));
+
+        // Stats counter trigger
+        const statsObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+            animateCounter(document.getElementById('c1'), 5000, '+');
+            animateCounter(document.getElementById('c2'), 6);
+            animateCounter(document.getElementById('c3'), 300, '+');
+            statsObs.disconnect();
+            }
+        });
+        }, { threshold: 0.3 });
+        statsObs.observe(document.querySelector('.stats'));
+
+        //Défilement vers le haut
+        document.querySelectorAll('.btn-primary').forEach(btn => { 
+            btn.addEventListener('click', function(e){
+            e.preventDefault();
+
+            const duration = 1500; // durée en ms (ici 1,5s)
+            const start = window.scrollY;
+            const startTime = performance.now();
+
+            function scrollStep(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = 1 - Math.pow(1 - progress, 3); // easing cubic-out
+                window.scrollTo(0, start * (1 - ease));
+
+                if(progress < 1){
+                    requestAnimationFrame(scrollStep);
+                }
+            }
+
+            requestAnimationFrame(scrollStep);
+        });
+      });
     </script>  
 
 </body>

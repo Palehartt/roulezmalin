@@ -187,7 +187,8 @@ public class DriivemeClient {
                     gpsStart,                      // gpsDemarrage
                     gpsEnd,                        // gpsArrivee
                     agence,                         // nomAgence
-                    "DriiveMe"
+                    "DriiveMe",
+                    detailUrls.size() > i ? detailUrls.get(i) : null // url
                 );
 
                 offres.add(offre);

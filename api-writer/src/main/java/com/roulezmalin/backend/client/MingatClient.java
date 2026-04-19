@@ -94,7 +94,7 @@ public class MingatClient {
             .findFirst();
     }
 
-    public record MingatResult(String json, MingatAgence agence) {}
+    public record MingatResult(String json, MingatAgence agence, String url) {}
 
     public MingatResult fetchDisponibilites(Trajet trajet) {
         if (agences.isEmpty() || vehicleTypes.isEmpty()) {
@@ -131,7 +131,12 @@ public class MingatClient {
 
         // On tente l'appel, avec un retry si l'agence est fermée
         String json = tenterAppel(agence, typeOpt.get(), dateDepart, dateArrivee, false);
-        return new MingatResult(json, agence);
+        String url = "https://www.mingat.com/reservation/vp-ca-" + dateDepart.substring(0, 16).replace("T", "").replace(":", "").replace("-", "") + "-" +
+                    dateArrivee.substring(0, 16).replace("T", "").replace(":", "").replace("-", ""); // exemple URL à retourner : https://www.mingat.com/reservation/vp-ca-202605060900-202605180900 avec les dates sans tirets ni deux points : https://www.mingat.com/reservation/vp-ca-202605060900-202605180900
+        // System.out.println("[MINGAT] Json reçu : " + json);
+        System.out.println("[MINGAT] URL générée : " + url);
+
+        return new MingatResult(json, agence, url);
     }
 
     private String tenterAppel(MingatAgence agence, MingatVehicleType type,
@@ -203,7 +208,7 @@ public class MingatClient {
 
                 } catch (Exception parseEx) {
                     System.err.println("[MINGAT] Impossible de parser le 422 : " + parseEx.getMessage());
-                    parseEx.printStackTrace(); // ← AJOUTE ÇA aussi
+                    parseEx.printStackTrace();
                 }
             }
 
@@ -217,7 +222,7 @@ public class MingatClient {
     /**
      * Parse le JSON de Mingat pour créer des objets OffreAffichage
      */
-    public List<OffreAffichage> parserResultatsMingat(String json, MingatAgence agence) {
+    public List<OffreAffichage> parserResultatsMingat(String json, MingatAgence agence, String url) {
         List<OffreAffichage> offres = new ArrayList<>();
         if (json == null || json.isEmpty()) return offres;
 
@@ -290,7 +295,8 @@ public class MingatClient {
                     String.valueOf(agence.latitude) + "," + String.valueOf(agence.longitude),
                     String.valueOf(agence.latitude) + "," + String.valueOf(agence.longitude),
                     nomAgenceDispo,
-                    "Mingat"
+                    "Mingat",
+                    url
                 ));
             }
 

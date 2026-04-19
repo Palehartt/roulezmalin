@@ -238,7 +238,7 @@ function conclureAccord(etat) {
     const carte = document.querySelectorAll(".offer-card")[etat.indexCarte];
     if (carte) {
         const prix = carte.querySelector(".price");
-        if (prix) prix.textContent = etat.prixVendeur + " € — négocié";
+        if (prix) prix.textContent = etat.prixVendeur + " € — Offre négocié";
     }
 }
 

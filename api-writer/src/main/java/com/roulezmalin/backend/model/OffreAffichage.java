@@ -14,10 +14,12 @@ public class OffreAffichage {
     public String gpsDemarrage;
     public String gpsArrivee;
     public String nomAgence;
+    public String url;
 
     public OffreAffichage(String nom, String exemple, String prix, String boite, int places, 
                           String moteur, String image, boolean clim, int nbBagages, 
-                          String gpsDemarrage, String gpsArrivee, String nomAgence, String entreprise) {
+                          String gpsDemarrage, String gpsArrivee, String nomAgence, String entreprise,
+                          String url) {
         this.nomVehicule = nom;
         this.exempleModele = exemple;
         this.prixTotal = prix;
@@ -31,5 +33,6 @@ public class OffreAffichage {
         this.gpsArrivee = gpsArrivee;
         this.nomAgence = nomAgence;
         this.entreprise = entreprise;
+        this.url = url;
     }
 }

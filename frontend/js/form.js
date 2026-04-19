@@ -1,4 +1,4 @@
-const ip_serv = "localhost";
+const ip_serv = "158.178.211.163";
 
 // ----------------------------------------------------------------
 // Retour sur le même lieu de départ
@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ----------------------------------------------------------------
 // Validation du formulaire
 // ----------------------------------------------------------------
-const inputs = document.querySelectorAll("input[type='text'], input[type='datetime-local']");
+const inputs = document.querySelectorAll("input[type='text']");
 
 const searchBtn = document.getElementById("search-btn");
 
@@ -187,7 +187,7 @@ searchBtn.addEventListener("click", (event) => {
         arriveLon: parseFloat(document.getElementById("arrive_lon")?.value) || null,
         dateDepart: document.getElementById("start-date").value,
         dateArrivee: document.getElementById("end-date").value,
-        typeVehicule: selectedVehicle, // Ta variable globale
+        typeVehicule: selectedVehicle, // variable globale
         identifiant: crypto.randomUUID(), // Génère un ID unique côté client
         budget: parseFloat(document.getElementById("budget").value)
     };
@@ -201,7 +201,7 @@ searchBtn.addEventListener("click", (event) => {
     let remaining = COUNTDOWN_SECONDS;
     const originalLabel = searchBtn.textContent;
 
-    searchBtn.textContent = "Recherche en cours...";
+    searchBtn.textContent = "Recherche...";
     envoyerRequete(trajetData, searchBtn, originalLabel);
 });
 
@@ -227,6 +227,8 @@ function envoyerRequete(trajetData, btn, originalLabel) {
         console.log("[FORM] Sauvegarde dans localStorage clé 'dernieres_offres'");
         localStorage.setItem('dernieres_offres', JSON.stringify(data.message));
         localStorage.setItem('budget', trajetData.budget);
+        localStorage.setItem('depart_lat', trajetData.departLat);
+    localStorage.setItem('depart_lon', trajetData.departLon);
         console.log("[FORM] Redirection vers trajet.html");
         window.location.href = "trajet.html";
     })

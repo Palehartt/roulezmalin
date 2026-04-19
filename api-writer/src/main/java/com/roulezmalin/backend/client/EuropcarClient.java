@@ -79,7 +79,7 @@ public class EuropcarClient {
             HttpEntity<String> entity = new HttpEntity<>(headers);
             System.out.println("[EUROPCAR] Url envoyée : " + url);
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-            List<OffreAffichage> offres = parserResultats(response.getBody(), agenceDep);
+            List<OffreAffichage> offres = parserResultats(response.getBody(), agenceDep, url);
             return offres;
 
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class EuropcarClient {
         }
     }
 
-    private List<OffreAffichage> parserResultats(String json, EuropcarAgence agence) {
+    private List<OffreAffichage> parserResultats(String json, EuropcarAgence agence, String url) {
         List<OffreAffichage> offres = new ArrayList<>();
         try {
             JsonNode root = mapper.readTree(json);
@@ -131,7 +131,8 @@ public class EuropcarClient {
                     agence.latitude + "," + agence.longitude,
                     agence.latitude + "," + agence.longitude,
                     agence.Nom,
-                    "Europcar"
+                    "Europcar",
+                    url
                 ));
             }
         } catch (Exception e) {

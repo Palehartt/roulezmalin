@@ -1,5 +1,6 @@
 package com.roulezmalin.backend.client;
 
+import com.roulezmalin.backend.model.MingatAgence;
 import com.roulezmalin.backend.model.OffreAffichage;
 import com.roulezmalin.backend.model.Trajet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +33,17 @@ public class RentacarClient {
 
     private String formaterDatePourRentacar(String dateRecue) {
     
-    DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-    
-    
-    LocalDateTime date = LocalDateTime.parse(dateRecue, inputFormatter);
-    
-    
-    
-    return date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-}
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        
+        LocalDateTime date = LocalDateTime.parse(dateRecue, inputFormatter);
+             
+        
+        return date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    }
 
-    public String fetchDisponibilites(Trajet trajet) {
+    public record RentacarResult(String json, String url) {}
+
+    public RentacarResult fetchDisponibilites(Trajet trajet) {
         
         // double[] coordsDep = geocodingService.getCoordinates(trajet.getAddresseDepart());
         // double[] coordsArr = geocodingService.getCoordinates(trajet.getAddresseArrivee());
@@ -58,7 +59,11 @@ public class RentacarClient {
 
         String rideType = "OneWay";
 
-        if(trajet.getAddresseDepart() == trajet.getAddresseArrivee()) {
+        System.out.println("[RENTACAR] : Addresse de départ : " + trajet.getAddresseDepart());
+        System.out.println("[RENTACAR] : Addresse d'arrivée : " + trajet.getAddresseArrivee());
+
+        if(trajet.getDepartLat().equals(trajet.getArriveLat()) && trajet.getDepartLon().equals(trajet.getArriveLon())) {
+            System.out.println("[RENTACAR] : Trajet aller-retour détecté.");
             rideType = "RoundTrip";
         }
 
@@ -89,20 +94,26 @@ public class RentacarClient {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.set("Origin", "https:www.rentacar.fr");
         headers.set("Referer", "https://www.rentacar.fr/");
+        headers.set("Accept", "application/json, text/plain, */*");
+        headers.set("Accept-Language", "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7");
+        headers.set("Sec-Fetch-Dest", "empty");
+        headers.set("Sec-Fetch-Mode", "cors");
+        headers.set("Sec-Fetch-Site", "same-site");
+
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
             
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-            return response.getBody();
+            return new RentacarResult(response.getBody(), url);
         } catch (Exception e) {
             System.err.println("[RENTACAR] : Détail de l'erreur : " + e.getMessage());
             throw e;
         }
     }
 
-    public List<OffreAffichage> parserResultatsRentacar(String jsonBrut) {
+    public List<OffreAffichage> parserResultatsRentacar(String jsonBrut, String urlTrajet) {
         List<OffreAffichage> offresTrouvees = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
 
@@ -154,8 +165,9 @@ public class RentacarClient {
                         cat.path("largeLuggageNumber").asInt(),      // nbBagages
                         gpsStart,                                    // gpsDemarrage
                         gpsEnd,                                      // gpsArrivee
-                        nomAgence,                         // nomAgence
-                        "RentaCar"
+                        nomAgence,                                  // nomAgence
+                        "RentaCar", 
+                        urlTrajet
                     ));
                 }
             }
