@@ -10,4 +10,54 @@
         <li><a href="#" data-page="compare">Comparateur</a></li>
         <li><a href="about.html" data-page="about">À propos</a></li>
     </ul>
+
+    <div id="nav-auth" style="display:flex;align-items:center;gap:10px;">
+        <!-- Rempli dynamiquement par auth-nav.js -->
+    </div>
 </nav>
+
+<style>
+.nav-auth-btn {
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+}
+.nav-btn-login {
+    background: transparent;
+    border: 1.5px solid #e5e7eb;
+    color: #374151;
+}
+.nav-btn-login:hover {
+    border-color: #1a56db;
+    color: #1a56db;
+}
+.nav-btn-compte {
+    background: linear-gradient(135deg, #1a56db, #1240a8);
+    color: white;
+    box-shadow: 0 3px 10px rgba(26,86,219,0.3);
+}
+.nav-btn-compte:hover {
+    box-shadow: 0 6px 16px rgba(26,86,219,0.45);
+    transform: translateY(-1px);
+}
+.nav-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a56db, #6366f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+}
+</style>

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Roulez Malin — Mon compte</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <script defer type="module" src="js/include.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #f8f9ff;
+            color: #1e293b;
+            padding-top: 90px;
+        }
+
+        /* ── Layout ── */
+        .compte-layout {
+            max-width: 1100px;
+            margin: 40px auto 80px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+        /* ── Sidebar profil ── */
+        .profil-card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.06);
+            position: sticky;
+            top: 100px;
+        }
+
+        .profil-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a56db, #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: white;
+            margin: 0 auto 16px;
+        }
+
+        .profil-name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: -0.3px;
+        }
+
+        .profil-email {
+            font-size: 13px;
+            color: #64748b;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .profil-divider {
+            height: 1px;
+            background: #f1f5f9;
+            margin: 20px 0;
+        }
+
+        .profil-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+        .profil-stat strong {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .profil-member {
+            font-size: 12px;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .btn-logout {
+            width: 100%;
+            margin-top: 20px;
+            padding: 11px;
+            border-radius: 12px;
+            border: 1.5px solid #e5e7eb;
+            background: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover {
+            border-color: #dc2626;
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
+        /* ── Contenu principal ── */
+        .compte-main {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px 28px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 17px;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .count-badge {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 3px 10px;
+            border-radius: 99px;
+        }
+
+        /* ── Ligne d'historique recherche ── */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        .history-item:hover {
+            border-color: rgba(26,86,219,0.2);
+            box-shadow: 0 4px 12px rgba(26,86,219,0.06);
+        }
+
+        .history-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #dbeafe, #ede9fe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .history-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .history-route {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-meta {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .history-right {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .history-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-accord { background: #dcfce7; color: #16a34a; }
+        .badge-echec  { background: #fee2e2; color: #dc2626; }
+        .badge-offres { background: #dbeafe; color: #1a56db; }
+
+        .history-price {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-top: 2px;
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+        }
+        .empty-state .empty-icon { font-size: 36px; margin-bottom: 10px; }
+        .empty-state p { font-size: 14px; }
+        .empty-state a {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1a56db, #1240a8);
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* ── Skeleton loader ── */
+        .skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+            border-radius: 10px;
+        }
+        @keyframes shimmer {
+            from { background-position: 200% 0; }
+            to   { background-position: -200% 0; }
+        }
+        .skel-row {
+            height: 64px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+        }
+
+        /* ── Négociation stats ── */
+        .nego-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        .nego-stat-card {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #f1f5f9;
+        }
+        .nego-stat-num {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            color: #1a56db;
+            letter-spacing: -1px;
+        }
+        .nego-stat-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .compte-layout {
+                grid-template-columns: 1fr;
+            }
+            .profil-card { position: static; }
+            .nego-stats { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="menu"></div>
+
+<div class="compte-layout">
+
+    <!-- ── Sidebar ── -->
+    <aside class="profil-card" id="profil-card">
+        <div class="profil-avatar" id="profil-initiales">?</div>
+        <div class="profil-name" id="profil-name">Chargement…</div>
+        <div class="profil-email" id="profil-email"></div>
+        <div class="profil-divider"></div>
+        <div class="profil-stat">
+            <span>Recherches</span>
+            <strong id="stat-searches">—</strong>
+        </div>
+        <div class="profil-stat">
+            <span>Négociations</span>
+            <strong id="stat-negos">—</strong>
+        </div>
+        <div class="profil-stat">
+            <span>Accords conclus</span>
+            <strong id="stat-accords">—</strong>
+        </div>
+        <div class="profil-member" id="profil-member"></div>
+        <button class="btn-logout" onclick="doLogout()">Se déconnecter</button>
+    </aside>
+
+    <!-- ── Contenu ── -->
+    <main class="compte-main">
+
+        <!-- Historique des recherches -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">🔍 Mes recherches</div>
+                <span class="count-badge" id="count-searches">…</span>
+            </div>
+            <div class="history-list" id="list-searches">
+                <div class="skeleton skel-row"></div>
+                <div class="skeleton skel-row"></div>
+                <div class="skeleton skel-row"></div>
+            </div>
+        </div>
+
+        <!-- Historique des négociations -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">🤝 Mes négociations</div>
+                <span class="count-badge" id="count-negos">…</span>
+            </div>
+
+            <!-- Stats rapides -->
+            <div class="nego-stats" id="nego-stats" style="display:none">
+                <div class="nego-stat-card">
+                    <div class="nego-stat-num" id="ns-total">0</div>
+                    <div class="nego-stat-label">Total</div>
+                </div>
+                <div class="nego-stat-card">
+                    <div class="nego-stat-num" id="ns-accords">0</div>
+                    <div class="nego-stat-label">Accords</div>
+                </div>
+                <div class="nego-stat-card">
+                    <div class="nego-stat-num" id="ns-eco">0 €</div>
+                    <div class="nego-stat-label">Économisé</div>
+                </div>
+            </div>
+
+            <div class="history-list" id="list-negos">
+                <div class="skeleton skel-row"></div>
+                <div class="skeleton skel-row"></div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<div id="footer"></div>
+
+<script type="module">
+    import { isLoggedIn, getUser, logout, fetchSearchHistory, fetchNegotiationHistory } from "./js/auth.js";
+
+    // Guard
+    if (!isLoggedIn()) {
+        window.location.href = "login.html";
+    }
+
+    window.doLogout = logout;
+
+    const user = getUser();
+
+    // ── Profil ──
+    if (user) {
+        const initiales = (user.prenom?.[0] || '') + (user.nom?.[0] || '');
+        document.getElementById("profil-initiales").textContent = initiales.toUpperCase();
+        document.getElementById("profil-name").textContent = `${user.prenom} ${user.nom}`;
+        document.getElementById("profil-email").textContent = user.email;
+    }
+
+    function formatDate(iso) {
+        const d = new Date(iso);
+        return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function formatDateTime(iso) {
+        const d = new Date(iso);
+        return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })
+             + ' à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // ── Recherches ──
+    const listSearches = document.getElementById("list-searches");
+    const countSearches = document.getElementById("count-searches");
+    const statSearches = document.getElementById("stat-searches");
+
+    fetchSearchHistory().then(data => {
+        listSearches.innerHTML = "";
+        countSearches.textContent = data.length + " recherche" + (data.length > 1 ? "s" : "");
+        statSearches.textContent = data.length;
+
+        if (data.length === 0) {
+            listSearches.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🗺️</div>
+                    <p>Vous n'avez pas encore effectué de recherche.</p>
+                    <a href="index.html">Trouver une location</a>
+                </div>`;
+            return;
+        }
+
+        data.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "history-item";
+            div.innerHTML = `
+                <div class="history-icon">📍</div>
+                <div class="history-body">
+                    <div class="history-route">${item.addresseDepart} → ${item.addresseArrivee}</div>
+                    <div class="history-meta">${item.dateDepart || ''} · ${formatDateTime(item.searchedAt)}</div>
+                </div>
+                <div class="history-right">
+                    <span class="history-badge badge-offres">${item.nbOffres} offre${item.nbOffres > 1 ? 's' : ''}</span>
+                </div>
+            `;
+            listSearches.appendChild(div);
+        });
+    }).catch(() => {
+        listSearches.innerHTML = `<div class="empty-state"><p>Erreur lors du chargement.</p></div>`;
+    });
+
+    // ── Négociations ──
+    const listNegos = document.getElementById("list-negos");
+    const countNegos = document.getElementById("count-negos");
+    const statNegos = document.getElementById("stat-negos");
+    const statAccords = document.getElementById("stat-accords");
+    const negoStats = document.getElementById("nego-stats");
+
+    fetchNegotiationHistory().then(data => {
+        listNegos.innerHTML = "";
+        countNegos.textContent = data.length + " négociation" + (data.length > 1 ? "s" : "");
+        statNegos.textContent = data.length;
+
+        const accords = data.filter(n => n.resultat === "accord");
+        statAccords.textContent = accords.length;
+
+        // Stats rapides
+        if (data.length > 0) {
+            negoStats.style.display = "grid";
+            document.getElementById("ns-total").textContent = data.length;
+            document.getElementById("ns-accords").textContent = accords.length;
+            const economise = accords.reduce((sum, n) => sum + (n.prixInitial - n.prixFinal), 0);
+            document.getElementById("ns-eco").textContent = economise.toFixed(0) + " €";
+        }
+
+        if (data.length === 0) {
+            listNegos.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🤝</div>
+                    <p>Vous n'avez pas encore négocié de prix.</p>
+                    <a href="index.html">Trouver une offre à négocier</a>
+                </div>`;
+            return;
+        }
+
+        data.forEach(item => {
+            const isAccord = item.resultat === "accord";
+            const reduction = isAccord ? (item.prixInitial - item.prixFinal).toFixed(0) : null;
+
+            const div = document.createElement("div");
+            div.className = "history-item";
+            div.innerHTML = `
+                <div class="history-icon">${isAccord ? '✅' : '❌'}</div>
+                <div class="history-body">
+                    <div class="history-route">${item.nomVehicule}</div>
+                    <div class="history-meta">${item.entreprise || ''} · ${formatDateTime(item.negotiatedAt)}</div>
+                </div>
+                <div class="history-right">
+                    <span class="history-badge ${isAccord ? 'badge-accord' : 'badge-echec'}">
+                        ${isAccord ? 'Accord' : 'Échec'}
+                    </span>
+                    <div class="history-price">
+                        ${isAccord
+                            ? `${item.prixFinal} € <span style="color:#16a34a;font-size:11px">(-${reduction} €)</span>`
+                            : `<span style="color:#94a3b8">${item.prixInitial} €</span>`}
+                    </div>
+                </div>
+            `;
+            listNegos.appendChild(div);
+        });
+    }).catch(() => {
+        listNegos.innerHTML = `<div class="empty-state"><p>Erreur lors du chargement.</p></div>`;
+    });
+</script>
+
+<script>
+    const currentPage = "compte";
+</script>
+
+</body>
+</html>

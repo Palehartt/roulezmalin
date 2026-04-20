@@ -31,7 +31,7 @@ public class SearchService {
         
         
         CompletableFuture<MessageReponse> promise = new CompletableFuture<MessageReponse>()
-            .orTimeout(10, TimeUnit.SECONDS)
+            .orTimeout(20, TimeUnit.SECONDS)
             .exceptionally(ex -> {
                 casiers.remove(requestId);
                 System.err.println("Timeout pour " + requestId);

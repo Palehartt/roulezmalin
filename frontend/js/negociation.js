@@ -1,5 +1,6 @@
-const PHRASES = {
+import { saveNegotiation, isLoggedIn } from "./auth.js";
 
+const PHRASES = {
     clientOuverture: [
         "Bonjour, je suis intéressé par ce véhicule. Je vous propose {prix} €, est-ce que cela vous convient ?",
         "Bonjour, votre offre m'intéresse. Seriez-vous prêt à me la céder pour {prix} € ?",
@@ -8,7 +9,6 @@ const PHRASES = {
         "Bonjour, ce véhicule m'intéresse beaucoup. Je peux vous proposer {prix} € pour cette location.",
         "Bonjour, j'ai consulté plusieurs offres et je suis prêt à mettre {prix} € pour ce véhicule.",
     ],
-
     clientContreoffre: [
         "Je comprends, mais je ne peux pas aller au-delà de {prix} €. C'est mon maximum.",
         "Votre prix reste trop élevé pour moi. Je maintiens mon offre à {prix} €.",
@@ -17,7 +17,6 @@ const PHRASES = {
         "Je suis sérieux dans ma démarche. {prix} €, c'est une offre honnête.",
         "Permettez-moi d'insister : {prix} €. Je pense que c'est un prix juste.",
     ],
-
     clientAgressif: [
         "Écoutez, je vais être franc : {prix} €, c'est mon dernier mot.",
         "Je n'irai pas plus haut que {prix} €. Prenez-le ou laissez-le.",
@@ -26,7 +25,6 @@ const PHRASES = {
         "{prix} €, c'est mon offre finale. Je n'ai pas de marge de manœuvre.",
         "Je vais aller voir ailleurs si vous ne pouvez pas faire {prix} €.",
     ],
-
     vendeurContreoffre: [
         "Je comprends votre budget, mais je ne peux pas descendre sous {prix} €. C'est déjà un effort de ma part.",
         "Votre offre est intéressante, mais le mieux que je puisse faire c'est {prix} €.",
@@ -37,21 +35,18 @@ const PHRASES = {
         "Le véhicule vaut son prix, mais je consens à {prix} € pour conclure.",
         "Je fais un geste commercial : {prix} €. C'est ma limite basse.",
     ],
-
     vendeurFerme: [
         "Je suis désolé, {prix} € est vraiment mon prix plancher. Je ne peux pas faire mieux.",
         "J'entends votre proposition, mais en dessous de {prix} € ce n'est pas rentable pour moi.",
         "Mon prix minimum est {prix} €. Je ne peux vraiment pas descendre davantage.",
         "Je suis au bout de ce que je peux faire : {prix} €. C'est impossible d'aller plus bas.",
     ],
-
     vendeurRefusNet: [
         "Je suis désolé, cette offre est trop éloignée de mes attentes. Je ne peux pas accepter.",
         "Votre proposition est bien trop basse, je préfère décliner. Bonne continuation.",
         "Je ne peux pas donner suite à cette offre. L'écart est trop important.",
         "Cette négociation ne peut pas aboutir à ce niveau de prix. Je dois refuser.",
     ],
-
     vendeurAccord: [
         "C'est une affaire conclue ! Je vous cède le véhicule pour {prix} €.",
         "D'accord, {prix} €. Marché conclu, vous avez bien négocié !",
@@ -59,16 +54,12 @@ const PHRASES = {
         "Entendu pour {prix} €. Je suis ravi de conclure avec vous.",
         "Va pour {prix} € ! C'est avec plaisir que je vous fais ce tarif.",
     ],
-
     clientAccord: [
         "Très bien, {prix} € c'est acceptable, je prends !",
         "D'accord pour {prix} €, marché conclu !",
         "Je suis prêt à aller jusqu'à {prix} €, c'est bon pour moi.",
         "Entendu, {prix} € ça me convient, on fait affaire.",
-        "Va pour {prix} €, je ne vais pas faire la fine bouche.",
-        "C'est un peu au-dessus de ce que je voulais mais {prix} €, d'accord.",
     ],
-
     refusFinal: [
         "Nous n'avons malheureusement pas réussi à trouver un terrain d'entente. Bonne continuation.",
         "Après réflexion, nos positions sont trop éloignées pour conclure. Désolé.",
@@ -99,17 +90,9 @@ function delaiAleatoire(min = 1000, max = 3000) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function arrondir(prix) {
-    return Math.round(prix);
-}
-
-function attendre(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function idFenetre(etat) {
-    return "fenetre-nego-" + etat.indexCarte;
-}
+function arrondir(prix) { return Math.round(prix); }
+function attendre(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+function idFenetre(etat) { return "fenetre-nego-" + etat.indexCarte; }
 
 // ============================================================
 // GESTION DES FENÊTRES
@@ -138,17 +121,8 @@ function creerFenetre(etat) {
         </div>
     `;
 
-    // Bouton réduire
-    fenetre.querySelector(".nego-btn-reduire").addEventListener("click", () => {
-        toggleReduire(etat);
-    });
-
-    // Bouton fermer
-    fenetre.querySelector(".nego-btn-fermer").addEventListener("click", () => {
-        fermerFenetre(etat);
-    });
-
-    // Clic sur le header pour rouvrir si réduit
+    fenetre.querySelector(".nego-btn-reduire").addEventListener("click", () => toggleReduire(etat));
+    fenetre.querySelector(".nego-btn-fermer").addEventListener("click", () => fermerFenetre(etat));
     fenetre.querySelector(".nego-header").addEventListener("click", (e) => {
         if (e.target.closest("button")) return;
         if (etat.reduite) toggleReduire(etat);
@@ -172,7 +146,7 @@ function fermerFenetre(etat) {
 }
 
 // ============================================================
-// AFFICHAGE DANS UNE FENÊTRE
+// AFFICHAGE
 // ============================================================
 
 function afficherBulle(etat, role, texte) {
@@ -186,12 +160,10 @@ function afficherBulle(etat, role, texte) {
     messages.scrollTop = messages.scrollHeight;
 }
 
-function afficherTyping(etat, role) {
+function afficherTyping(etat) {
     const fenetre = document.getElementById(idFenetre(etat));
     if (!fenetre) return;
-    const typing = fenetre.querySelector(".nego-typing");
-    typing.setAttribute("data-role", role);
-    typing.style.display = "flex";
+    fenetre.querySelector(".nego-typing").style.display = "flex";
 }
 
 function cacherTyping(etat) {
@@ -225,12 +197,11 @@ function mettreAJourHeader(etat) {
 }
 
 // ============================================================
-// CONCLURE
+// CONCLURE + SAUVEGARDE HISTORIQUE
 // ============================================================
 
 function conclureAccord(etat) {
     afficherFooter(etat, "Accord conclu à " + etat.prixVendeur + " € !", "footer-accord");
-
     etat.terminee = true;
     etat.resultat = "accord";
     mettreAJourHeader(etat);
@@ -238,7 +209,18 @@ function conclureAccord(etat) {
     const carte = document.querySelectorAll(".offer-card")[etat.indexCarte];
     if (carte) {
         const prix = carte.querySelector(".price");
-        if (prix) prix.textContent = etat.prixVendeur + " € — Offre négocié";
+        if (prix) prix.textContent = etat.prixVendeur + " € — Offre négociée";
+    }
+
+    // Sauvegarde si connecté
+    if (isLoggedIn()) {
+        saveNegotiation({
+            nomVehicule: etat.offre.nomVehicule,
+            prixInitial: parseFloat(etat.offre.prixTotal),
+            prixFinal: etat.prixVendeur,
+            resultat: "accord",
+            entreprise: etat.offre.entreprise || ""
+        });
     }
 }
 
@@ -248,19 +230,29 @@ function conclureEchec(etat, typeRefus) {
         : "Aucun accord n'a pu être trouvé.";
 
     afficherFooter(etat, texte, "footer-echec");
-
     etat.terminee = true;
     etat.resultat = "echec";
     numeroNegociationEchoue++;
     mettreAJourHeader(etat);
+
+    // Sauvegarde si connecté
+    if (isLoggedIn()) {
+        saveNegotiation({
+            nomVehicule: etat.offre.nomVehicule,
+            prixInitial: parseFloat(etat.offre.prixTotal),
+            prixFinal: etat.prixVendeur,
+            resultat: "echec",
+            entreprise: etat.offre.entreprise || ""
+        });
+    }
 }
 
 // ============================================================
 // STRATÉGIE
 // ============================================================
 
-function getMiroir(numeroNegociation) {
-    const centrale = Math.max(1.0 - (numeroNegociation * 0.15), 0.3);
+function getMiroir(n) {
+    const centrale = Math.max(1.0 - (n * 0.15), 0.3);
     const bruit = (Math.random() * 0.30) - 0.15;
     return Math.min(Math.max(centrale + bruit, 0.3), 1.1);
 }
@@ -276,8 +268,7 @@ function refusNet(ecartNormalise, roundActuel) {
     if (roundActuel == 1) return 0;
     const facteurTemps = 1 - roundActuel * 0.1;
     const proba = Math.pow(ecartNormalise, 1.2) * facteurTemps;
-    const tirage = Math.random();
-    return tirage < proba ? 1 : 0;
+    return Math.random() < proba ? 1 : 0;
 }
 
 function proposerPrixClient(budget, prixOffre, numeroNegociationEchoue, roundActuel, roundMax, dernierPrixClient, dernierPrixVendeur, avantDernierPrixVendeur) {
@@ -314,7 +305,6 @@ function proposerPrixVendeur(prixActuelVendeur, prixClient, plancher, roundActue
 
 function lancerNegociation(offre, indexCarte, budget) {
     numeroNegociationGlobal++;
-
     const roundMax = Math.floor(Math.random() * 3) + 4;
     const plancher = arrondir((Math.random() * (0.85 - 0.70) + 0.70) * offre.prixTotal);
 
@@ -323,11 +313,11 @@ function lancerNegociation(offre, indexCarte, budget) {
         prixClient: null,
         avantDernierPrixVendeur: null,
         roundActuel: 0,
-        roundMax: roundMax,
-        plancher: plancher,
-        offre: offre,
-        indexCarte: indexCarte,
-        budget: budget,
+        roundMax,
+        plancher,
+        offre,
+        indexCarte,
+        budget,
         reduite: false,
         terminee: false,
         resultat: null
@@ -341,40 +331,28 @@ function lancerNegociation(offre, indexCarte, budget) {
 async function jouerRound(etat) {
     etat.roundActuel++;
 
-    // === TOUR CLIENT ===
-    afficherTyping(etat, "client");
+    // Tour client
+    afficherTyping(etat);
     await attendre(delaiAleatoire());
 
     etat.prixClient = proposerPrixClient(
-        etat.budget,
-        etat.offre.prixTotal,
-        numeroNegociationEchoue,
+        etat.budget, etat.offre.prixTotal, numeroNegociationEchoue,
         etat.roundActuel === 1 ? 0 : etat.roundActuel,
-        etat.roundMax,
-        etat.prixClient,
-        etat.prixVendeur,
-        etat.avantDernierPrixVendeur
+        etat.roundMax, etat.prixClient, etat.prixVendeur, etat.avantDernierPrixVendeur
     );
 
     cacherTyping(etat);
 
-    const categorieClient = etat.roundActuel === 1
-        ? "clientOuverture"
-        : numeroNegociationEchoue >= 2
-            ? "clientAgressif"
-            : "clientContreoffre";
-
+    const categorieClient = etat.roundActuel === 1 ? "clientOuverture"
+        : numeroNegociationEchoue >= 2 ? "clientAgressif" : "clientContreoffre";
     afficherBulle(etat, "client", phraseAleatoire(categorieClient, etat.prixClient));
 
-    // === TOUR VENDEUR ===
-    afficherTyping(etat, "vendeur");
+    // Tour vendeur
+    afficherTyping(etat);
     await attendre(delaiAleatoire());
 
     const nouveauPrixVendeur = proposerPrixVendeur(
-        etat.prixVendeur,
-        etat.prixClient,
-        etat.plancher,
-        etat.roundActuel
+        etat.prixVendeur, etat.prixClient, etat.plancher, etat.roundActuel
     );
 
     cacherTyping(etat);
@@ -388,27 +366,21 @@ async function jouerRound(etat) {
     etat.avantDernierPrixVendeur = etat.prixVendeur;
     etat.prixVendeur = nouveauPrixVendeur;
 
-    // === VERIF ACCORD ===
     if (etat.prixClient >= etat.prixVendeur) {
         afficherBulle(etat, "vendeur", phraseAleatoire("vendeurAccord", etat.prixVendeur));
         conclureAccord(etat);
         return;
     }
 
-    // === VERIF ROUNDS EPUISES ===
     if (etat.roundActuel === etat.roundMax) {
         afficherBulle(etat, "vendeur", phraseAleatoire("refusFinal", etat.prixVendeur));
         conclureEchec(etat, "final");
         return;
     }
 
-    const categorieVendeur = etat.prixVendeur <= etat.plancher * 1.05
-        ? "vendeurFerme"
-        : "vendeurContreoffre";
-
+    const categorieVendeur = etat.prixVendeur <= etat.plancher * 1.05 ? "vendeurFerme" : "vendeurContreoffre";
     afficherBulle(etat, "vendeur", phraseAleatoire(categorieVendeur, etat.prixVendeur));
 
-    // === ROUND SUIVANT ===
     jouerRound(etat);
 }
 

@@ -1,13 +1,11 @@
 services:
-  # Le site web pour ton collègue
   web:
     build: ./frontend
     ports:
       - "5500:80"
     volumes:
-      - ./frontend:/usr/share/nginx/html # Permet de voir les modifs HTML sans relancer Docker
+      - ./frontend:/usr/share/nginx/html
 
-  # Ton futur serveur Java
   api-writer:
     build: ./api-writer
     ports:
@@ -24,7 +22,35 @@ services:
     depends_on:
       - database
 
-  # La base de données
+  api-auth:
+    build: ./api-auth
+    ports:
+      - "8082:8082"
+    container_name: api-auth-java
+    depends_on:
+      - mysql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/roulezmalin?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=roulezmalin
+      - SPRING_DATASOURCE_PASSWORD=roulezmalin123
+      - JWT_SECRET=roulezmalin-super-secret-jwt-key-2026-change-in-prod
+
   database:
     image: redis:alpine
     container_name: redis-service
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-service
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: roulezmalin
+      MYSQL_USER: roulezmalin
+      MYSQL_PASSWORD: roulezmalin123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

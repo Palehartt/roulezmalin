@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="css/flatpickr-elegant-theme.css" />
     <!-- <script src="https://cdn.jsdelivr.net/npm/flatpickr-elegant-theme/dist/flatpickr-sunday-highlight-plugin.umd.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script defer src="js/include.js"></script>
-    <script defer src="js/form.js"></script>
+    <script defer type="module" src="js/include.js"></script>
+    <script defer type="module" src="js/form.js"></script>
     <script defer src="js/autocomplete.js"></script>
 </head>
 
@@ -175,6 +175,81 @@
         <a href="#" class="btn-primary">Rechercher maintenant</a>
     </section>
 
+    <section class="partners">
+        <p class="partners-label">Nos partenaires de confiance</p>
+        <div class="carousel-track-wrap">
+            <div class="carousel-track" id="track">
+        
+              <!-- Europcar -->
+              <div class="logo-item">
+                <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0" y="8" width="52" height="44" rx="6" fill="#00A651"/>
+                  <text x="26" y="36" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="13" fill="white">EUR</text>
+                  <text x="65" y="42" font-family="Arial Black,sans-serif" font-weight="900" font-size="28" fill="#00A651" letter-spacing="-1">opcar</text>
+                </svg>
+              </div>
+        
+              <!-- Hertz -->
+              <div class="logo-item">
+                <svg viewBox="0 0 180 60" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0" y="5" width="180" height="50" rx="4" fill="#FFD700"/>
+                  <text x="90" y="39" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="30" fill="#1a1a1a" letter-spacing="2">HERTZ</text>
+                </svg>
+              </div>
+        
+              <!-- Sixt -->
+              <div class="logo-item">
+                <svg viewBox="0 0 160 60" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0" y="5" width="160" height="50" rx="4" fill="#FF6400"/>
+                  <text x="80" y="40" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="34" fill="white" letter-spacing="3">SIXT</text>
+                </svg>
+              </div>
+        
+              <!-- Avis -->
+              <div class="logo-item">
+                <svg viewBox="0 0 160 60" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0" y="5" width="160" height="50" rx="4" fill="#CC0000"/>
+                  <text x="80" y="40" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="34" fill="white" letter-spacing="4">AVIS</text>
+                </svg>
+              </div>
+        
+              <!-- Budget -->
+              <div class="logo-item">
+                <svg viewBox="0 0 190 60" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0" y="5" width="190" height="50" rx="4" fill="#E31837"/>
+                  <text x="95" y="40" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="28" fill="white" letter-spacing="2">BUDGET</text>
+                </svg>
+              </div>
+        
+              <!-- Enterprise -->
+              <div class="logo-item">
+                <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0" y="5" width="200" height="50" rx="4" fill="#006F51"/>
+                  <text x="100" y="37" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="14" fill="white" letter-spacing="1">ENTERPRISE</text>
+                  <text x="100" y="52" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#a0e0c8" letter-spacing="2">RENT-A-CAR</text>
+                </svg>
+              </div>
+        
+              <!-- Thrifty -->
+              <div class="logo-item">
+                <svg viewBox="0 0 180 60" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0" y="5" width="180" height="50" rx="4" fill="#003087"/>
+                  <text x="90" y="40" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="26" fill="white" letter-spacing="1">THRIFTY</text>
+                </svg>
+              </div>
+        
+              <!-- National -->
+              <div class="logo-item">
+                <svg viewBox="0 0 190 60" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0" y="5" width="190" height="50" rx="4" fill="#D4002A"/>
+                  <text x="95" y="40" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="22" fill="white" letter-spacing="2">NATIONAL</text>
+                </svg>
+              </div>
+        
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <div id="footer"></div>
 
@@ -241,6 +316,10 @@
             requestAnimationFrame(scrollStep);
         });
       });
+
+        const track = document.getElementById('track');
+        const original = track.innerHTML;
+        track.innerHTML = original + original;
     </script>  
 
 </body>
